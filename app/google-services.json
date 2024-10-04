@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "401459360063",
+    "project_id": "bright-habit-uts",
+    "storage_bucket": "bright-habit-uts.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:401459360063:android:0070bedee131937327238a",
+        "android_client_info": {
+          "package_name": "com.example.brighthabit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdNKnTMK6hAOFzjQtDt0EhCfHAZjOyu6o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
