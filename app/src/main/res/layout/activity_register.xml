@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegisterActivity"
+    tools:context=".Register"
     android:padding="16dp">
 
     <!-- Judul "Register" -->
@@ -38,7 +38,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintHorizontal_bias="0.5"
         android:layout_marginTop="40dp"/>
 
     <!-- Input Password -->
@@ -50,30 +49,32 @@
         android:inputType="textPassword"
         android:padding="12dp"
         android:textColorHint="#8DC63F"
+        android:textColor="#000000"
         android:background="@drawable/shape"
         app:layout_constraintTop_toBottomOf="@id/etEmail"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintHorizontal_bias="0.5"
         android:layout_marginTop="20dp"/>
 
+    <!-- Input Umur -->
     <EditText
         android:id="@+id/etAge"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/shape"
         android:hint="Umur"
         android:inputType="number"
         android:padding="12dp"
         android:textColorHint="#8DC63F"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="#000000"
+        android:background="@drawable/shape"
+        app:layout_constraintTop_toBottomOf="@id/etPassword"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintTop_toBottomOf="@id/etPassword" />
+        android:layout_marginTop="20dp"/>
 
+    <!-- Input Username -->
     <EditText
         android:id="@+id/etUsername"
         android:layout_width="0dp"
@@ -82,12 +83,12 @@
         android:inputType="text"
         android:padding="12dp"
         android:textColorHint="#8DC63F"
+        android:textColor="#000000"
         android:background="@drawable/shape"
         app:layout_constraintTop_toBottomOf="@id/etAge"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintHorizontal_bias="0.5"
         android:layout_marginTop="20dp"/>
 
     <!-- Input Foto -->
@@ -102,7 +103,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintHorizontal_bias="0.5"
         android:layout_marginTop="20dp"
         android:padding="12dp">
 
@@ -119,7 +119,7 @@
             android:id="@+id/btnAddPhoto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_add_photo"
+            android:src="@android:drawable/ic_menu_camera"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Add Photo"/>
     </LinearLayout>
@@ -136,7 +136,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintHorizontal_bias="0.5"
         android:layout_marginTop="40dp"/>
 
     <!-- Logo di bawah -->
@@ -144,7 +143,9 @@
         android:id="@+id/imgLogo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/your_logo"
+        android:src="@drawable/ic_launcher_foreground"
+        tools:layout_editor_absoluteX="143dp"
+        tools:layout_editor_absoluteY="573dp"
         android:contentDescription="Logo"
         app:layout_constraintTop_toBottomOf="@id/btnRegister"
         app:layout_constraintStart_toStartOf="parent"

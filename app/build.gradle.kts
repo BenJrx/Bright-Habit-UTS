@@ -50,6 +50,8 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation("com.google.firebase:firebase-analytics:21.2.0")
     implementation("com.google.firebase:firebase-auth:22.0.0")
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.storage.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
