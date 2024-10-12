@@ -90,9 +90,9 @@
     <!-- Logo di bawah -->
     <ImageView
         android:id="@+id/imgLogo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher_foreground"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/logo_bright_habit"
         tools:layout_editor_absoluteX="132dp"
         tools:layout_editor_absoluteY="485dp"
         android:contentDescription="Logo"
