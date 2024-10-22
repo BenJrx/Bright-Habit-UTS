@@ -8,7 +8,6 @@
     tools:context=".Register"
     android:padding="16dp">
 
-    <!-- Judul "Register" -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
@@ -20,10 +19,9 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="100dp"
         android:gravity="center_horizontal"/>
 
-    <!-- Input Email -->
     <EditText
         android:id="@+id/etEmail"
         android:layout_width="0dp"
@@ -38,9 +36,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.8"
-        android:layout_marginTop="40dp"/>
+        android:layout_marginTop="30dp"/>
 
-    <!-- Input Password -->
     <EditText
         android:id="@+id/etPassword"
         android:layout_width="0dp"
@@ -57,97 +54,26 @@
         app:layout_constraintWidth_percent="0.8"
         android:layout_marginTop="20dp"/>
 
-    <!-- Input Umur -->
-    <EditText
-        android:id="@+id/etAge"
+    <Button
+        android:id="@+id/btnNext"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Umur"
-        android:inputType="number"
-        android:padding="12dp"
-        android:textColorHint="#8DC63F"
-        android:textColor="#000000"
-        android:background="@drawable/shape"
+        android:text="Next"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/button_background"
         app:layout_constraintTop_toBottomOf="@id/etPassword"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.8"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="30dp"/>
 
-    <!-- Input Username -->
-    <EditText
-        android:id="@+id/etUsername"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Username"
-        android:inputType="text"
-        android:padding="12dp"
-        android:textColorHint="#8DC63F"
-        android:textColor="#000000"
-        android:background="@drawable/shape"
-        app:layout_constraintTop_toBottomOf="@id/etAge"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.8"
-        android:layout_marginTop="20dp"/>
-
-    <!-- Input Foto -->
-    <LinearLayout
-        android:id="@+id/photoContainer"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:background="@drawable/shape"
-        app:layout_constraintTop_toBottomOf="@id/etUsername"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.8"
-        android:layout_marginTop="20dp"
-        android:padding="12dp">
-
-        <TextView
-            android:id="@+id/tvPhoto"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Photo"
-            android:textColor="#8DC63F"
-            android:gravity="center_vertical"/>
-
-        <ImageButton
-            android:id="@+id/btnAddPhoto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_camera"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Add Photo"/>
-    </LinearLayout>
-
-    <!-- Tombol Register -->
-    <Button
-        android:id="@+id/btnRegister"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Register"
-        android:backgroundTint="#6AAA2C"
-        android:textColor="#FFFFFF"
-        app:layout_constraintTop_toBottomOf="@id/photoContainer"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.8"
-        android:layout_marginTop="40dp"/>
-
-    <!-- Logo di bawah -->
     <ImageView
         android:id="@+id/imgLogo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher_foreground"
-        tools:layout_editor_absoluteX="143dp"
-        tools:layout_editor_absoluteY="573dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/logo_bright_habit"
         android:contentDescription="Logo"
-        app:layout_constraintTop_toBottomOf="@id/btnRegister"
+        app:layout_constraintTop_toBottomOf="@id/btnNext"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="50dp"

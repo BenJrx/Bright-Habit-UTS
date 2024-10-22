@@ -28,7 +28,7 @@ class SplashActivity : AppCompatActivity() {
                 Handler(Looper.getMainLooper()).postDelayed({
                     startActivity(Intent(this@SplashActivity, Onboarding1Activity::class.java))
                     finish()
-                }, 3000) // 3 seconds delay after fade in (total 5 seconds)
+                }, 3000)
             }
             override fun onAnimationRepeat(animation: Animation?) {}
         })

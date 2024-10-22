@@ -15,9 +15,8 @@ class Onboarding2Activity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.btnGetStarted.setOnClickListener {
-            // Arahkan ke Login Activity
             startActivity(Intent(this, Login::class.java))
-            finish() // Optional: tutup activity ini agar tidak bisa kembali ke onboarding
+            finish()
         }
     }
 }

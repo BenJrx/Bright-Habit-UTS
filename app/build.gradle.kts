@@ -41,7 +41,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -49,10 +48,17 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.firebase.auth)
     implementation("com.google.firebase:firebase-analytics:21.2.0")
-    implementation("com.google.firebase:firebase-auth:22.0.0")
+    implementation("com.google.firebase:firebase-auth:21.0.3")
+    implementation("com.google.firebase:firebase-firestore-ktx:24.0.1")
+    implementation("com.google.firebase:firebase-storage-ktx:20.0.1")
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.storage.ktx)
+    implementation("com.github.bumptech.glide:glide:4.12.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
+    implementation ("com.squareup.picasso:picasso:2.71828")
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
+
