@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -13,9 +14,11 @@ import de.hdodenhof.circleimageview.CircleImageView
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.example.brighthabit.databinding.ActivityHomepageBinding
 
 class Homepage : AppCompatActivity() {
 
+    private lateinit var binding: ActivityHomepageBinding
     private lateinit var db: FirebaseFirestore
     private lateinit var storage: FirebaseStorage
     private lateinit var auth: FirebaseAuth
@@ -26,20 +29,27 @@ class Homepage : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_homepage)
+        binding = ActivityHomepageBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
+        // Initialize Firebase
         db = FirebaseFirestore.getInstance()
         storage = FirebaseStorage.getInstance()
         auth = FirebaseAuth.getInstance()
 
-        profileImage = findViewById(R.id.profileImage)
-        greetingText = findViewById(R.id.greetingText)
-        dateText = findViewById(R.id.todayDate)
+        profileImage = binding.profileImage
+        greetingText = binding.greetingText
+        dateText = binding.todayDate
+
+        binding.recyclerViewHabits.layoutManager = LinearLayoutManager(this)
+        val habitAdapter = HabitAdapter(getHabits())
+        binding.recyclerViewHabits.adapter = habitAdapter
 
         loadUserData()
-
         setCurrentDate()
     }
+
+
 
     private fun loadUserData() {
         val userId = auth.currentUser?.uid
@@ -52,8 +62,7 @@ class Homepage : AppCompatActivity() {
                         val profileUrl = document.getString("photoUrl")
 
                         greetingText.text = "Halo,"
-
-                        findViewById<TextView>(R.id.username).text = username
+                        binding.username.text = username
 
                         if (!profileUrl.isNullOrEmpty()) {
                             Picasso.get().load(profileUrl).into(profileImage)
@@ -75,7 +84,6 @@ class Homepage : AppCompatActivity() {
         }
     }
 
-
     private fun setCurrentDate() {
         val sdf = SimpleDateFormat("EEEE dd", Locale.getDefault())
         val currentDate = sdf.format(Date())
@@ -85,4 +93,13 @@ class Homepage : AppCompatActivity() {
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
+
+    private fun getHabits(): MutableList<Habit> {
+        return mutableListOf(
+            Habit("Belajar", "10/13/2024", false),
+            Habit("Mengaji", "10/13/2024", false),
+            Habit("Membaca Alkitab", "10/13/2024", false)
+        )
+    }
+
 }
