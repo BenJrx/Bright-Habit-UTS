@@ -17,6 +17,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/forumIcon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="0dp"
+        android:src="@drawable/ic_forum"
+        android:background="@drawable/rounded_background"
+        android:padding="8dp"
+        app:layout_constraintStart_toEndOf="@id/habitsCard"
+        app:layout_constraintTop_toTopOf="@id/habitsCard"
+        app:layout_constraintBottom_toBottomOf="@id/habitsCard"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <TextView
         android:id="@+id/greetingText"
         android:layout_width="wrap_content"
