@@ -51,6 +51,11 @@ class Homepage : AppCompatActivity() {
             val intent = Intent(this, NewHabitActivity::class.java)
             startActivity(intent)
         }
+
+        binding.profileImage.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun loadUserData() {
