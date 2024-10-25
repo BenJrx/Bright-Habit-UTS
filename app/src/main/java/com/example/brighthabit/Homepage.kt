@@ -56,6 +56,11 @@ class Homepage : AppCompatActivity() {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
+
+        binding.forumIcon.setOnClickListener {
+            val intent = Intent(this, ForumActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun loadUserData() {
