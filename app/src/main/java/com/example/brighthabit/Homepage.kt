@@ -32,7 +32,6 @@ class Homepage : AppCompatActivity() {
         binding = ActivityHomepageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize Firebase
         db = FirebaseFirestore.getInstance()
         storage = FirebaseStorage.getInstance()
         auth = FirebaseAuth.getInstance()
@@ -47,9 +46,12 @@ class Homepage : AppCompatActivity() {
 
         loadUserData()
         setCurrentDate()
+
+        binding.btnAddHabit.setOnClickListener {
+            val intent = Intent(this, NewHabitActivity::class.java)
+            startActivity(intent)
+        }
     }
-
-
 
     private fun loadUserData() {
         val userId = auth.currentUser?.uid
@@ -101,5 +103,4 @@ class Homepage : AppCompatActivity() {
             Habit("Membaca Alkitab", "10/13/2024", false)
         )
     }
-
 }
