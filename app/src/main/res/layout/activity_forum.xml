@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ForumActivity">
 
+    <!-- RecyclerView untuk menampilkan daftar pesan -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewForum"
         android:layout_width="0dp"
@@ -16,13 +17,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- FloatingActionButton untuk menambahkan pesan baru -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_add"
+        android:src="@drawable/ic_pencil"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@android:color/white"
+        app:backgroundTint="@color/green" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

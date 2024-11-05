@@ -1,6 +1,7 @@
 package com.example.brighthabit
 
 data class Message(
-    val text: String = "",
-    val timestamp: Long = System.currentTimeMillis()
+    val username: String,
+    val date: String,
+    val text: String
 )
