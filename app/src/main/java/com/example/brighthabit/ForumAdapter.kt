@@ -19,7 +19,6 @@ class ForumAdapter : ListAdapter<Message, ForumAdapter.MessageViewHolder>(DiffCa
         val message = getItem(position)
         holder.bind(message)
 
-        // Mengatur klik pada gambar profil untuk membuka MessageDetailActivity
         holder.binding.profileImage.setOnClickListener {
             val context = holder.itemView.context
             val intent = Intent(context, MessageDetailActivity::class.java)
@@ -30,7 +29,6 @@ class ForumAdapter : ListAdapter<Message, ForumAdapter.MessageViewHolder>(DiffCa
         }
     }
 
-    // MessageViewHolder mengelola tampilan item pesan di RecyclerView
     class MessageViewHolder(val binding: ItemMessageBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -41,7 +39,6 @@ class ForumAdapter : ListAdapter<Message, ForumAdapter.MessageViewHolder>(DiffCa
         }
     }
 
-    // DiffUtil untuk membandingkan item di RecyclerView
     class DiffCallback : DiffUtil.ItemCallback<Message>() {
         override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean {
             return oldItem.username == newItem.username

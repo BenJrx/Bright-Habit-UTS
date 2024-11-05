@@ -20,18 +20,18 @@ class EditMessageActivity : AppCompatActivity() {
 
         binding.buttonSubmit.setOnClickListener {
             val messageText = binding.editTextMessage.text.toString()
-            val username = "YourUsername" // Gantilah sesuai mekanisme mendapatkan username pengguna
-            val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
-            saveMessageToFirestore(username, date, messageText)
-        }
-    }
+            if (messageText.isNotBlank()) {
+                val currentDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+                val message = Message("Username", currentDate, messageText)
 
-    private fun saveMessageToFirestore(username: String, date: String, text: String) {
-        val message = Message(username, date, text)
-        db.collection("messages")
-            .add(message)
-            .addOnSuccessListener {
-                finish() // Kembali ke ForumActivity setelah berhasil
+                db.collection("messages").add(message)
+                    .addOnSuccessListener {
+                        finish()
+                    }
+                    .addOnFailureListener {
+                        // Menampilkan error (bisa menggunakan log atau toast)
+                    }
             }
+        }
     }
 }

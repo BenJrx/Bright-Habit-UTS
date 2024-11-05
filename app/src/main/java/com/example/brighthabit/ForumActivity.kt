@@ -6,38 +6,38 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.brighthabit.databinding.ActivityForumBinding
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QueryDocumentSnapshot
 
 class ForumActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityForumBinding
     private lateinit var forumAdapter: ForumAdapter
-    private val db = FirebaseFirestore.getInstance()
+    private val db = FirebaseFirestore.getInstance() // Referensi ke Firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityForumBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Set up RecyclerView untuk menampilkan daftar pesan
         binding.recyclerViewForum.layoutManager = LinearLayoutManager(this)
         forumAdapter = ForumAdapter()
         binding.recyclerViewForum.adapter = forumAdapter
 
+        // Aksi saat tombol tambah pesan ditekan
         binding.fabAddMessage.setOnClickListener {
             val intent = Intent(this, EditMessageActivity::class.java)
             startActivity(intent)
         }
 
-        // Load messages from Firestore
+        // Panggil fungsi untuk memuat pesan dari Firestore secara real-time
         loadMessagesFromFirestoreRealtime()
     }
 
-    // Method untuk mengambil data secara realtime dari Firestore
+    // Fungsi untuk mendapatkan data pesan secara real-time dari Firestore
     private fun loadMessagesFromFirestoreRealtime() {
         db.collection("messages")
             .addSnapshotListener { snapshot, e ->
                 if (e != null) {
-                    // Jika ada error, tampilkan log atau toast
                     return@addSnapshotListener
                 }
 
