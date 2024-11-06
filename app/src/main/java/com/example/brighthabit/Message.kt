@@ -5,3 +5,4 @@ data class Message(
     val date: String = "",
     val text: String = ""
 )
+
