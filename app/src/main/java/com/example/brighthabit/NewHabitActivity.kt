@@ -5,18 +5,24 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.brighthabit.databinding.ActivityNewHabitBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 
 class NewHabitActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityNewHabitBinding
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNewHabitBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Set a date picker dialog
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
+
         binding.llDate.setOnClickListener {
             val calendar = Calendar.getInstance()
             val year = calendar.get(Calendar.YEAR)
@@ -34,19 +40,44 @@ class NewHabitActivity : AppCompatActivity() {
             datePickerDialog.show()
         }
 
-        // Handle create button click
         binding.btnCreate.setOnClickListener {
             val habitName = binding.etHabitName.text.toString()
             val goal = binding.etGoal.text.toString()
             val times = binding.etTimes.text.toString()
             val targetDate = binding.tvDate.text.toString()
 
-            if (habitName.isEmpty() || goal.isEmpty() || times.isEmpty() || targetDate == "Select a target or end date") {
+            if (habitName.isEmpty() || goal.isEmpty() || times.isEmpty() ||
+                targetDate == "Select a target or end date") {
                 Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
-            } else {
-                // Code to save the habit to database or other actions
-                Toast.makeText(this, "Habit Created!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            val userId = auth.currentUser?.uid
+            if (userId == null) {
+                Toast.makeText(this, "Please login first", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Create new habit
+            val habit = Habit(
+                namaHabit = habitName,
+                goal = goal,
+                times = times.toIntOrNull() ?: 0,
+                date = targetDate,
+                isDone = false,
+                userId = userId
+            )
+
+            // Save to Firestore
+            db.collection("habits")
+                .add(habit)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Habit created successfully!", Toast.LENGTH_SHORT).show()
+                    finish() // Return to Homepage
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "Error creating habit: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
         }
     }
 }

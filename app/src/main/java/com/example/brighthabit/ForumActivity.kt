@@ -2,6 +2,7 @@ package com.example.brighthabit
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.brighthabit.databinding.ActivityForumBinding
@@ -30,25 +31,63 @@ class ForumActivity : AppCompatActivity() {
         }
 
         // Panggil fungsi untuk memuat pesan dari Firestore secara real-time
-        loadMessagesFromFirestoreRealtime()
+        loadMessagesWithUserData { messages ->
+            forumAdapter.submitList(messages)
+        }
     }
 
-    // Fungsi untuk mendapatkan data pesan secara real-time dari Firestore
-    private fun loadMessagesFromFirestoreRealtime() {
-        db.collection("messages")
-            .addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    return@addSnapshotListener
-                }
+    // Fungsi untuk mendapatkan data pesan dan data pengguna dengan benar dari Firestore
+    private fun loadMessagesWithUserData(onComplete: (List<Message>) -> Unit) {
+        val firestore = FirebaseFirestore.getInstance()
+        val messagesRef = firestore.collection("messages")
+        val usersRef = firestore.collection("users")
 
-                if (snapshot != null && !snapshot.isEmpty) {
-                    val messagesList = mutableListOf<Message>()
-                    for (document in snapshot.documents) {
-                        val message = document.toObject(Message::class.java)
-                        message?.let { messagesList.add(it) }
-                    }
-                    forumAdapter.submitList(messagesList)
-                }
+        messagesRef.get().addOnSuccessListener { messagesSnapshot ->
+            val messages = mutableListOf<Message>()
+            val userIds = mutableSetOf<String>()
+
+            // Ambil userId dari setiap pesan
+            for (doc in messagesSnapshot.documents) {
+                val userId = doc.getString("userId") ?: ""
+                userIds.add(userId)
             }
+
+            // Ambil data pengguna berdasarkan userId
+            if (userIds.isNotEmpty()) {
+                usersRef.whereIn("userId", userIds.toList()).get()
+                    .addOnSuccessListener { usersSnapshot ->
+                        val usersMap = usersSnapshot.documents.associateBy(
+                            { it.getString("userId") ?: "" },
+                            { it }
+                        )
+
+                        // Gabungkan data pesan dengan data pengguna
+                        for (doc in messagesSnapshot.documents) {
+                            val userId = doc.getString("userId") ?: ""
+                            val userDoc = usersMap[userId]
+
+                            val message = Message(
+                                username = userDoc?.getString("username") ?: "Unknown",  // Pastikan username terisi
+                                date = doc.getString("date") ?: "",
+                                text = doc.getString("text") ?: "",
+                                photoUrl = userDoc?.getString("photoUrl") ?: "",  // Pastikan photoUrl terisi
+                                userId = userId
+                            )
+
+                            messages.add(message)
+                        }
+
+                        onComplete(messages)
+                    }
+                    .addOnFailureListener { e ->
+                        e.printStackTrace()
+                    }
+            } else {
+                onComplete(emptyList())
+            }
+        }.addOnFailureListener { e ->
+            e.printStackTrace()
+        }
     }
+
 }

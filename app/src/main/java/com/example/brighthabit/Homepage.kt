@@ -22,6 +22,8 @@ class Homepage : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
     private lateinit var storage: FirebaseStorage
     private lateinit var auth: FirebaseAuth
+    private lateinit var habitAdapter: HabitAdapter
+    private val habits = mutableListOf<Habit>()
 
     private lateinit var profileImage: CircleImageView
     private lateinit var greetingText: TextView
@@ -40,11 +42,15 @@ class Homepage : AppCompatActivity() {
         greetingText = binding.greetingText
         dateText = binding.todayDate
 
-        binding.recyclerViewHabits.layoutManager = LinearLayoutManager(this)
-        val habitAdapter = HabitAdapter(getHabits())
-        binding.recyclerViewHabits.adapter = habitAdapter
+        // Initialize RecyclerView with empty adapter
+        habitAdapter = HabitAdapter(habits)
+        binding.recyclerViewHabits.apply {
+            layoutManager = LinearLayoutManager(this@Homepage)
+            adapter = habitAdapter
+        }
 
         loadUserData()
+        loadHabits()
         setCurrentDate()
 
         binding.btnAddHabit.setOnClickListener {
@@ -79,7 +85,7 @@ class Homepage : AppCompatActivity() {
                         if (!profileUrl.isNullOrEmpty()) {
                             Picasso.get().load(profileUrl).into(profileImage)
                         } else {
-                            profileImage.setImageResource(R.drawable.default_profile) // Set a default profile image
+                            profileImage.setImageResource(R.drawable.default_profile)
                         }
                     } else {
                         showToast("Data pengguna tidak ditemukan.")
@@ -96,6 +102,29 @@ class Homepage : AppCompatActivity() {
         }
     }
 
+    private fun loadHabits() {
+        val userId = auth.currentUser?.uid ?: return
+
+        db.collection("habits")
+            .whereEqualTo("userId", userId)
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    showToast("Error loading habits: ${e.message}")
+                    return@addSnapshotListener
+                }
+
+                val habitsList = snapshot?.documents?.mapNotNull { doc ->
+                    doc.toObject(Habit::class.java)?.copy(id = doc.id)
+                } ?: listOf()
+
+                // Hanya perbarui jika ada perubahan
+                if (habitsList != habitAdapter.habitList) {
+                    habitAdapter.updateHabitList(habitsList)
+                }
+            }
+    }
+
+
     private fun setCurrentDate() {
         val sdf = SimpleDateFormat("EEEE dd", Locale.getDefault())
         val currentDate = sdf.format(Date())
@@ -104,13 +133,5 @@ class Homepage : AppCompatActivity() {
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun getHabits(): MutableList<Habit> {
-        return mutableListOf(
-            Habit("Belajar", "10/13/2024", false),
-            Habit("Mengaji", "10/13/2024", false),
-            Habit("Membaca Alkitab", "10/13/2024", false)
-        )
     }
 }

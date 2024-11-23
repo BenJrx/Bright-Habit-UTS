@@ -7,8 +7,11 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.FirebaseFirestore
 
-class HabitAdapter(private val habitList: MutableList<Habit>) : RecyclerView.Adapter<HabitAdapter.HabitViewHolder>() {
+class HabitAdapter(val habitList: MutableList<Habit>) : RecyclerView.Adapter<HabitAdapter.HabitViewHolder>() {
+
+    private val db = FirebaseFirestore.getInstance()
 
     class HabitViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val habitIcon: ImageView = itemView.findViewById(R.id.habit_icon)
@@ -25,42 +28,45 @@ class HabitAdapter(private val habitList: MutableList<Habit>) : RecyclerView.Ada
     override fun onBindViewHolder(holder: HabitViewHolder, position: Int) {
         val habit = habitList[position]
 
+        // Hapus listener sebelumnya untuk menghindari konflik
+        holder.checkDone.setOnCheckedChangeListener(null)
+
+        // Atur tampilan berdasarkan data Habit
         holder.habitName.text = habit.namaHabit
         holder.habitDate.text = habit.date
         holder.checkDone.isChecked = habit.isDone
-        
-        holder.checkDone.visibility = if (habit.isDone) {
-            holder.habitName.paintFlags = holder.habitName.paintFlags or android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
-            View.GONE
-        } else {
-            holder.habitName.paintFlags = holder.habitName.paintFlags and android.graphics.Paint.STRIKE_THRU_TEXT_FLAG.inv()
-            View.VISIBLE
-        }
 
-        holder.checkDone.setOnCheckedChangeListener(null)
+        // Perbarui dekorasi teks (coretan)
+        updateTextDecoration(holder, habit.isDone)
+
+        // Tambahkan listener baru pada CheckBox
         holder.checkDone.setOnCheckedChangeListener { _, isChecked ->
+            // Perbarui data objek Habit
             habit.isDone = isChecked
+            updateTextDecoration(holder, isChecked)
 
-            holder.itemView.post {
-                if (isChecked) {
-                    holder.habitName.paintFlags = holder.habitName.paintFlags or android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
-                    holder.checkDone.visibility = View.GONE
-                } else {
-                    holder.habitName.paintFlags = holder.habitName.paintFlags and android.graphics.Paint.STRIKE_THRU_TEXT_FLAG.inv()
-                    holder.checkDone.visibility = View.VISIBLE
+            // Simpan perubahan ke Firestore
+            db.collection("habits").document(habit.id)
+                .update("isDone", isChecked)
+                .addOnFailureListener { e ->
+                    e.printStackTrace()
                 }
-
-                notifyItemChanged(position)
-            }
         }
     }
 
-
-    override fun getItemCount(): Int {
-        return habitList.size
+    private fun updateTextDecoration(holder: HabitViewHolder, isDone: Boolean) {
+        if (isDone) {
+            holder.habitName.paintFlags =
+                holder.habitName.paintFlags or android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
+        } else {
+            holder.habitName.paintFlags =
+                holder.habitName.paintFlags and android.graphics.Paint.STRIKE_THRU_TEXT_FLAG.inv()
+        }
     }
 
-    fun updateHabitList(newHabitList: MutableList<Habit>) {
+    override fun getItemCount(): Int = habitList.size
+
+    fun updateHabitList(newHabitList: List<Habit>) {
         habitList.clear()
         habitList.addAll(newHabitList)
         notifyDataSetChanged()
