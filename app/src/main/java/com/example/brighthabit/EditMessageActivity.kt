@@ -56,7 +56,7 @@ class EditMessageActivity : AppCompatActivity() {
                         userId = userId
                     )
 
-                    // Simpan pesan ke koleksi `messages`
+                    
                     db.collection("messages").add(message)
                         .addOnSuccessListener {
                             Log.d("EditMessageActivity", "Message sent successfully: $message")
