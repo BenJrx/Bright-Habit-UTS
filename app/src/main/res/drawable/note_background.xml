@@ -1,0 +1,7 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FFF9C4" /> <!-- Warna kuning lembut untuk catatan -->
+    <corners android:radius="8dp" /> <!-- Sudut membulat -->
+    <stroke
+        android:width="1dp"
+        android:color="#FFC107" /> <!-- Garis tepi dengan warna kuning -->
+</shape>

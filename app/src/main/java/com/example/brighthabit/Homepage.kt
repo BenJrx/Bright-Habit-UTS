@@ -6,27 +6,34 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.brighthabit.ForumActivity
+import com.example.brighthabit.Habit
+import com.example.brighthabit.HabitAdapter
+import com.example.brighthabit.ProfileActivity
+import com.example.brighthabit.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.Calendar
 import java.util.Locale
 import com.example.brighthabit.databinding.ActivityHomepageBinding
+import java.util.Date
 
 class Homepage : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomepageBinding
     private lateinit var db: FirebaseFirestore
-    private lateinit var storage: FirebaseStorage
     private lateinit var auth: FirebaseAuth
     private lateinit var habitAdapter: HabitAdapter
     private val habits = mutableListOf<Habit>()
+    private val weekDates = mutableListOf<String>()
 
     private lateinit var profileImage: CircleImageView
     private lateinit var greetingText: TextView
+    private lateinit var usernameText: TextView
+    private lateinit var taglineText: TextView
     private lateinit var dateText: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,12 +42,21 @@ class Homepage : AppCompatActivity() {
         setContentView(binding.root)
 
         db = FirebaseFirestore.getInstance()
-        storage = FirebaseStorage.getInstance()
         auth = FirebaseAuth.getInstance()
 
         profileImage = binding.profileImage
         greetingText = binding.greetingText
-        dateText = binding.todayDate
+        usernameText = binding.username
+        taglineText = binding.tagline
+
+        // Mengecek apakah pengguna sudah login
+        val userId = auth.currentUser?.uid
+        if (userId == null) {
+            // Jika belum login, arahkan ke halaman login
+            val intent = Intent(this, Login::class.java)
+            startActivity(intent)
+            finish()
+        }
 
         // Initialize RecyclerView with empty adapter
         habitAdapter = HabitAdapter(habits)
@@ -51,7 +67,7 @@ class Homepage : AppCompatActivity() {
 
         loadUserData()
         loadHabits()
-        setCurrentDate()
+        setWeekDates()
 
         binding.btnAddHabit.setOnClickListener {
             val intent = Intent(this, NewHabitActivity::class.java)
@@ -80,8 +96,10 @@ class Homepage : AppCompatActivity() {
                         val profileUrl = document.getString("photoUrl")
 
                         greetingText.text = "Halo,"
-                        binding.username.text = username
+                        usernameText.text = username
+                        taglineText.text = "Begin. Believe. Become. Shine."
 
+                        // Set profile image
                         if (!profileUrl.isNullOrEmpty()) {
                             Picasso.get().load(profileUrl).into(profileImage)
                         } else {
@@ -114,21 +132,42 @@ class Homepage : AppCompatActivity() {
                 }
 
                 val habitsList = snapshot?.documents?.mapNotNull { doc ->
-                    doc.toObject(Habit::class.java)?.copy(id = doc.id)
+                    val habit = doc.toObject(Habit::class.java)
+                    habit?.copy(id = doc.id) // Menambahkan id dokumen dari Firestore
                 } ?: listOf()
 
-                // Hanya perbarui jika ada perubahan
-                if (habitsList != habitAdapter.habitList) {
-                    habitAdapter.updateHabitList(habitsList)
-                }
+                // Update list only if there are changes
+                habitAdapter.updateHabitList(habitsList)
             }
     }
 
 
-    private fun setCurrentDate() {
-        val sdf = SimpleDateFormat("EEEE dd", Locale.getDefault())
-        val currentDate = sdf.format(Date())
-        dateText.text = currentDate
+    private fun setWeekDates() {
+        val calendar = Calendar.getInstance()
+
+        // Set to 7 days before today
+        calendar.add(Calendar.DAY_OF_YEAR, -6)
+
+        val weekDates = mutableListOf<String>()
+
+        // Generate dates for the past week including today
+        for (i in 0 until 7) {
+            val day = SimpleDateFormat("EEE", Locale.getDefault()).format(calendar.time)
+            val date = SimpleDateFormat("dd", Locale.getDefault()).format(calendar.time)
+            weekDates.add("$day $date")
+            calendar.add(Calendar.DAY_OF_YEAR, 1)
+        }
+
+        // Update RecyclerView with dates
+        val dateAdapter = DateAdapter(weekDates)
+        binding.recyclerViewDates.apply {
+            layoutManager = LinearLayoutManager(this@Homepage, LinearLayoutManager.HORIZONTAL, false)
+            adapter = dateAdapter
+        }
+
+        // Highlight today's date
+        val today = SimpleDateFormat("dd", Locale.getDefault()).format(Date())
+        dateAdapter.setSelectedDate(today)
     }
 
     private fun showToast(message: String) {

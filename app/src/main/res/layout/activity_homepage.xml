@@ -8,6 +8,7 @@
     android:background="@color/white"
     tools:context=".Homepage">
 
+    <!-- Logo Image -->
     <ImageView
         android:id="@+id/logoImage"
         android:layout_width="50dp"
@@ -17,6 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Forum Icon -->
     <ImageView
         android:id="@+id/forumIcon"
         android:layout_width="40dp"
@@ -31,6 +33,7 @@
         app:layout_constraintBottom_toBottomOf="@id/habitsCard"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Greeting Text -->
     <TextView
         android:id="@+id/greetingText"
         android:layout_width="wrap_content"
@@ -43,6 +46,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/logoImage" />
 
+    <!-- Username Text -->
     <TextView
         android:id="@+id/username"
         android:layout_width="0dp"
@@ -56,6 +60,9 @@
         app:layout_constraintStart_toStartOf="@id/greetingText"
         app:layout_constraintTop_toBottomOf="@id/greetingText" />
 
+    <!-- Tagline -->
+
+    <!-- Profile Image -->
     <TextView
         android:id="@+id/tagline"
         android:layout_width="wrap_content"
@@ -65,7 +72,7 @@
         android:textColor="@color/gray"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="@id/username"
-        app:layout_constraintHorizontal_bias="0.006"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@id/greetingText"
         app:layout_constraintTop_toBottomOf="@id/username" />
 
@@ -80,6 +87,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/greetingText" />
 
+    <!-- Habits Card -->
     <androidx.cardview.widget.CardView
         android:id="@+id/habitsCard"
         android:layout_width="wrap_content"
@@ -117,6 +125,7 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <!-- RecyclerView for Habits -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewHabits"
         android:layout_width="369dp"
@@ -128,20 +137,21 @@
         app:layout_constraintTop_toBottomOf="@id/habitsCard"
         app:layout_constraintVertical_bias="0.035" />
 
-    <TextView
-        android:id="@+id/todayDate"
-        android:layout_width="70dp"
-        android:layout_height="22dp"
-        android:layout_marginTop="224dp"
-        android:text="Tanggal"
-        android:textColor="@color/gray"
-        android:textSize="14sp"
+    <!-- Scrollable Dates Section -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:layout_marginTop="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.055"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerViewHabits" />
+        app:layout_constraintEnd_toEndOf="parent">
 
+
+    </HorizontalScrollView>
+
+
+    <!-- Add New Habit Button -->
     <Button
         android:id="@+id/btnAddHabit"
         android:layout_width="wrap_content"
@@ -150,11 +160,27 @@
         android:textAllCaps="true"
         android:backgroundTint="@color/green"
         android:textColor="@android:color/white"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerViewHabits"
+        app:layout_constraintTop_toBottomOf="@id/recyclerViewHabits"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp" />
+
+    <!-- RecyclerView for Dates -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewDates"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:paddingVertical="8dp"
+        android:scrollbars="none"
+        android:layout_marginTop="200dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnAddHabit"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

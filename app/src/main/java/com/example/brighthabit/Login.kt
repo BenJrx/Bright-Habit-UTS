@@ -20,6 +20,16 @@ class Login : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
+        // Mengecek apakah pengguna sudah login
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            // Jika sudah login, langsung arahkan ke Homepage
+            val intent = Intent(this, Homepage::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish() // Menutup activity login
+        }
+
         binding.btnRegister.setOnClickListener {
             val intent = Intent(this, Register::class.java)
             startActivity(intent)
@@ -51,7 +61,7 @@ class Login : AppCompatActivity() {
                     val intent = Intent(this, Homepage::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
-                    finish()
+                    finish() // Menutup halaman login setelah berhasil login
                 } else {
                     showToast("Login gagal: ${task.exception?.message}")
                 }

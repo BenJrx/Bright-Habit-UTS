@@ -58,15 +58,17 @@ class NewHabitActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Create new habit
+            // Habit initialization when creating new habit
             val habit = Habit(
                 namaHabit = habitName,
                 goal = goal,
                 times = times.toIntOrNull() ?: 0,
                 date = targetDate,
                 isDone = false,
-                userId = userId
+                userId = userId,
+                doneDates = mutableListOf() // Initialize with empty list
             )
+
 
             // Save to Firestore
             db.collection("habits")
