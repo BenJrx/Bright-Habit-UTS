@@ -33,7 +33,6 @@ class HabitDetailActivity : AppCompatActivity() {
         tvNote = findViewById(R.id.tvNote)
         val calendarView: GridLayout = findViewById(R.id.calendarView)
 
-
         // Ambil ID Habit dari Intent
         val habitId = intent.getStringExtra("HABIT_ID")
         if (habitId.isNullOrEmpty()) {

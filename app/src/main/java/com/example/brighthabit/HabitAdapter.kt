@@ -52,23 +52,28 @@ class HabitAdapter(val habitList: MutableList<Habit>) : RecyclerView.Adapter<Hab
 
         // Listener CheckBox untuk memperbarui status habit
         holder.checkDone.setOnCheckedChangeListener { _, isChecked ->
+            val currentDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
+
             if (isChecked) {
                 if (!habit.doneDates.contains(currentDate)) {
-                    habit.doneDates.add(currentDate)
+                    habit.doneDates.add(currentDate) // Tambahkan tanggal saat ini
                 }
             } else {
-                habit.doneDates.remove(currentDate)
+                habit.doneDates.remove(currentDate) // Hapus jika tidak dicentang
             }
-            habit.isDone = isChecked
-            updateTextDecoration(holder, isChecked)
 
-            // Simpan status terbaru ke Firestore
+            // Update data ke Firestore
             db.collection("habits").document(habit.id)
-                .update("isDone", habit.isDone, "doneDates", habit.doneDates)
-                .addOnFailureListener { e -> e.printStackTrace() }
+                .update("doneDates", habit.doneDates)
+                .addOnSuccessListener {
+                    Log.d("HabitUpdate", "Tanggal habit berhasil diperbarui")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("HabitUpdate", "Gagal memperbarui habit: ${e.message}")
+                }
         }
 
-        // Memastikan habit status ter-reset jika belum selesai hari ini
+        // Jangan reset status done jika sudah selesai pada hari sebelumnya
         resetHabitStatusIfNeeded(habit, currentDate)
     }
 
@@ -81,14 +86,10 @@ class HabitAdapter(val habitList: MutableList<Habit>) : RecyclerView.Adapter<Hab
         }
     }
 
-    // Fungsi untuk mereset status habit jika tanggal hari ini belum tercatat
+    // Fungsi untuk memeriksa apakah habit sudah selesai hari ini
     private fun resetHabitStatusIfNeeded(habit: Habit, currentDate: String) {
-        if (!habit.doneDates.contains(currentDate)) {
-            habit.isDone = false // Reset status isDone ke false jika habit belum selesai hari ini
-            db.collection("habits").document(habit.id)
-                .update("isDone", habit.isDone)  // Update Firestore
-                .addOnFailureListener { e -> e.printStackTrace() }
-        }
+        val isDoneToday = habit.doneDates.contains(currentDate)
+        habit.isDone = isDoneToday
     }
 
     override fun getItemCount(): Int = habitList.size
@@ -100,4 +101,3 @@ class HabitAdapter(val habitList: MutableList<Habit>) : RecyclerView.Adapter<Hab
         notifyDataSetChanged()
     }
 }
-

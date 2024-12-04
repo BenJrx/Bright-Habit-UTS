@@ -2,6 +2,7 @@ package com.example.brighthabit
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +20,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import com.example.brighthabit.databinding.ActivityHomepageBinding
+import com.google.firebase.firestore.FieldValue
 import java.util.Date
 
 class Homepage : AppCompatActivity() {
@@ -122,6 +124,7 @@ class Homepage : AppCompatActivity() {
 
     private fun loadHabits() {
         val userId = auth.currentUser?.uid ?: return
+        val currentDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
 
         db.collection("habits")
             .whereEqualTo("userId", userId)
@@ -132,15 +135,18 @@ class Homepage : AppCompatActivity() {
                 }
 
                 val habitsList = snapshot?.documents?.mapNotNull { doc ->
-                    val habit = doc.toObject(Habit::class.java)
-                    habit?.copy(id = doc.id) // Menambahkan id dokumen dari Firestore
+                    val habit = doc.toObject(Habit::class.java)?.copy(id = doc.id)
+                    if (habit != null) {
+                        // Cek apakah tanggal saat ini ada di doneDates dan set isDone
+                        habit.isDone = habit.doneDates.contains(currentDate) || habit.isDone
+                    }
+                    habit
                 } ?: listOf()
 
-                // Update list only if there are changes
+                // Update RecyclerView dengan habit yang sudah diperbarui
                 habitAdapter.updateHabitList(habitsList)
             }
     }
-
 
     private fun setWeekDates() {
         val calendar = Calendar.getInstance()
@@ -168,6 +174,20 @@ class Homepage : AppCompatActivity() {
         // Highlight today's date
         val today = SimpleDateFormat("dd", Locale.getDefault()).format(Date())
         dateAdapter.setSelectedDate(today)
+    }
+
+    private fun updateHabitStatus(habitId: String, currentDate: String) {
+        val userId = auth.currentUser?.uid ?: return
+        val habitRef = db.collection("habits").document(habitId)
+
+        habitRef.update(
+            "doneDates", FieldValue.arrayUnion(currentDate),
+            "isDone", true
+        ).addOnSuccessListener {
+            Log.d("Homepage", "Habit status updated successfully")
+        }.addOnFailureListener { e ->
+            showToast("Error updating habit: ${e.message}")
+        }
     }
 
     private fun showToast(message: String) {

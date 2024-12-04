@@ -10,7 +10,7 @@ import com.example.brighthabit.databinding.ItemDateBinding
 
 class DateAdapter(private val weekDates: List<String>) : RecyclerView.Adapter<DateAdapter.DateViewHolder>() {
 
-    private var selectedPosition: Int = -1 // To track selected position
+    private var selectedPosition: Int = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DateViewHolder {
         val binding = ItemDateBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -22,12 +22,12 @@ class DateAdapter(private val weekDates: List<String>) : RecyclerView.Adapter<Da
         val (day, dateNum) = date.split(" ")
         holder.bind(day, dateNum, position == selectedPosition)
 
-        // Set click listener to update selection
+
         holder.itemView.setOnClickListener {
             val previousPosition = selectedPosition
             selectedPosition = position
-            notifyItemChanged(previousPosition) // Refresh old selection
-            notifyItemChanged(selectedPosition) // Refresh new selection
+            notifyItemChanged(previousPosition)
+            notifyItemChanged(selectedPosition)
         }
     }
 

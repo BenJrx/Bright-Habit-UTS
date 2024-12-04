@@ -7,7 +7,7 @@ data class Habit(
     val times: Int = 0,
     val date: String = "",
     var isDone: Boolean = false,
-    val userId: String = "", // To associate habits with specific users
+    val userId: String = "", // Untuk menghubungkan habit dengan pengguna spesifik
     val doneDates: MutableList<String> = mutableListOf() // Properti untuk melacak tanggal habit selesai
 )
 
