@@ -1,5 +1,6 @@
 package com.example.brighthabit
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -30,64 +31,38 @@ class ForumActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Panggil fungsi untuk memuat pesan dari Firestore secara real-time
-        loadMessagesWithUserData { messages ->
+        // Panggil fungsi untuk memuat pesan dari Firestore
+        loadMessages { messages ->
             forumAdapter.submitList(messages)
         }
     }
 
-    // Fungsi untuk mendapatkan data pesan dan data pengguna dengan benar dari Firestore
-    private fun loadMessagesWithUserData(onComplete: (List<Message>) -> Unit) {
-        val firestore = FirebaseFirestore.getInstance()
-        val messagesRef = firestore.collection("messages")
-        val usersRef = firestore.collection("users")
+    // Fungsi untuk mendapatkan data pesan langsung dari Firestore
+    private fun loadMessages(onComplete: (List<Message>) -> Unit) {
+        val messagesRef = db.collection("messages")
 
-        messagesRef.get().addOnSuccessListener { messagesSnapshot ->
-            val messages = mutableListOf<Message>()
-            val userIds = mutableSetOf<String>()
+        messagesRef.get()
+            .addOnSuccessListener { messagesSnapshot ->
+                val messages = mutableListOf<Message>()
 
-            // Ambil userId dari setiap pesan
-            for (doc in messagesSnapshot.documents) {
-                val userId = doc.getString("userId") ?: ""
-                userIds.add(userId)
+                // Ambil data langsung dari dokumen di koleksi messages
+                for (doc in messagesSnapshot.documents) {
+                    val message = Message(
+                        username = doc.getString("username") ?: "Unknown", // Ambil username langsung
+                        date = doc.getString("date") ?: "",                // Ambil tanggal
+                        text = doc.getString("text") ?: "",                // Ambil isi pesan
+                        photoUrl = doc.getString("photoUrl") ?: "",        // Ambil URL foto
+                        userId = doc.getString("userId") ?: ""             // Ambil userId
+                    )
+                    messages.add(message)
+                    Log.d(TAG, "Message loaded: $message") // Debug log
+                }
+
+                onComplete(messages) // Kirim data ke adapter
             }
-
-            // Ambil data pengguna berdasarkan userId
-            if (userIds.isNotEmpty()) {
-                usersRef.whereIn("userId", userIds.toList()).get()
-                    .addOnSuccessListener { usersSnapshot ->
-                        val usersMap = usersSnapshot.documents.associateBy(
-                            { it.getString("userId") ?: "" },
-                            { it }
-                        )
-
-                        // Gabungkan data pesan dengan data pengguna
-                        for (doc in messagesSnapshot.documents) {
-                            val userId = doc.getString("userId") ?: ""
-                            val userDoc = usersMap[userId]
-
-                            val message = Message(
-                                username = userDoc?.getString("username") ?: "Unknown",  // Pastikan username terisi
-                                date = doc.getString("date") ?: "",
-                                text = doc.getString("text") ?: "",
-                                photoUrl = userDoc?.getString("photoUrl") ?: "",  // Pastikan photoUrl terisi
-                                userId = userId
-                            )
-
-                            messages.add(message)
-                        }
-
-                        onComplete(messages)
-                    }
-                    .addOnFailureListener { e ->
-                        e.printStackTrace()
-                    }
-            } else {
-                onComplete(emptyList())
+            .addOnFailureListener { e ->
+                Log.e("Firestore", "Failed to fetch messages: ${e.message}")
+                onComplete(emptyList()) // Kirim daftar kosong jika gagal
             }
-        }.addOnFailureListener { e ->
-            e.printStackTrace()
-        }
     }
-
 }
