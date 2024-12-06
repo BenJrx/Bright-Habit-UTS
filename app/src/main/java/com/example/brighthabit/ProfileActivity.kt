@@ -1,18 +1,15 @@
 package com.example.brighthabit
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ProfileActivity : AppCompatActivity() {
@@ -23,8 +20,9 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var btnSave: Button
     private lateinit var btnEdit: ImageView
     private lateinit var btnBack: ImageView
+    private lateinit var btnLogout: Button
     private lateinit var authProfile: FirebaseAuth
-    private var user: FirebaseUser? = null
+    private var user = FirebaseAuth.getInstance().currentUser
     private lateinit var firestore: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,10 +36,10 @@ class ProfileActivity : AppCompatActivity() {
         btnSave = findViewById(R.id.btnSave)
         btnEdit = findViewById(R.id.btnEdit)
         btnBack = findViewById(R.id.btnBack)
+        btnLogout = findViewById(R.id.btnLogout)
 
         authProfile = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
-        user = authProfile.currentUser
 
         loadUserProfile()
 
@@ -58,6 +56,13 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         btnBack.setOnClickListener {
+            finish()
+        }
+
+        btnLogout.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+            val intent = Intent(this, Login::class.java)
+            startActivity(intent)
             finish()
         }
     }
@@ -79,10 +84,9 @@ class ProfileActivity : AppCompatActivity() {
                         editNama.setText(nama ?: "")
                         editUmur.setText(umur ?: "")
 
-                        // Load photo with Glide
                         Glide.with(this)
                             .load(photoUrl)
-                            .placeholder(R.drawable.ic_launcher_background) // Gambar default jika URL kosong
+                            .placeholder(R.drawable.ic_launcher_background)
                             .into(profileImage)
                     }
                 }
