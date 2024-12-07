@@ -21,6 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <!-- Profil Foto -->
             <ImageView
                 android:id="@+id/profileImage"
                 android:layout_width="50dp"
@@ -32,6 +33,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:src="@drawable/ic_default_profile" />
 
+            <!-- Username -->
             <TextView
                 android:id="@+id/username"
                 android:layout_width="wrap_content"
@@ -46,6 +48,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="John Doe" />
 
+            <!-- Tanggal -->
             <TextView
                 android:id="@+id/textViewDate"
                 android:layout_width="wrap_content"
@@ -58,6 +61,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:text="2h ago" />
 
+            <!-- Konten Pesan -->
             <TextView
                 android:id="@+id/textViewMessageContent"
                 android:layout_width="0dp"
@@ -68,14 +72,23 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/profileImage"
                 app:layout_constraintTop_toBottomOf="@id/profileImage"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/replyIcon"
                 android:layout_marginStart="12dp"
                 android:layout_marginEnd="12dp"
                 android:layout_marginBottom="16dp"
                 tools:text="This is the message content" />
 
+            <!-- Ikon Balas -->
+            <ImageView
+                android:id="@+id/replyIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_margin="8dp"
+                android:src="@drawable/ic_reply"
+                android:contentDescription="Reply Icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.cardview.widget.CardView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

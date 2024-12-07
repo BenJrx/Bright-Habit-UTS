@@ -1,7 +1,5 @@
 package com.example.brighthabit
 
-import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -10,52 +8,51 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.brighthabit.databinding.ItemMessageBinding
 
-class ForumAdapter : ListAdapter<Message, ForumAdapter.MessageViewHolder>(DiffCallback()) {
+class ForumAdapter(
+    private val onReplyClick: (Message) -> Unit,
+    private val onItemClick: (Message) -> Unit
+) : ListAdapter<Message, ForumAdapter.ForumViewHolder>(DiffCallback()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
-        val binding = ItemMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return MessageViewHolder(binding)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ForumViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = ItemMessageBinding.inflate(inflater, parent, false)
+        return ForumViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ForumViewHolder, position: Int) {
         val message = getItem(position)
         holder.bind(message)
-
-        // Memastikan photoUrl tidak null dan memuat gambar profil
-        if (!message.photoUrl.isNullOrEmpty()) {
-            Glide.with(holder.itemView.context)
-                .load(message.photoUrl)
-                .into(holder.binding.profileImage)
-        } else {
-            // Load gambar default jika photoUrl kosong
-            Glide.with(holder.itemView.context)
-                .load(R.drawable.ic_default_profile)  // Gunakan gambar default jika photoUrl kosong
-                .into(holder.binding.profileImage)
-        }
-
-        holder.binding.profileImage.setOnClickListener {
-            val context = holder.itemView.context
-            val intent = Intent(context, MessageDetailActivity::class.java)
-            intent.putExtra("username", message.username)
-            intent.putExtra("date", message.date)
-            intent.putExtra("message", message.text)
-            context.startActivity(intent)
-        }
     }
 
-    class MessageViewHolder(val binding: ItemMessageBinding) :
+    inner class ForumViewHolder(private val binding: ItemMessageBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(message: Message) {
-            binding.username.text = message.username  // Menampilkan username
-            binding.textViewDate.text = message.date  // Menampilkan tanggal
-            binding.textViewMessageContent.text = message.text  // Menampilkan konten pesan
+            binding.username.text = message.username
+            binding.textViewDate.text = message.date
+            binding.textViewMessageContent.text = message.text
+
+            // Memuat gambar profil jika URL tersedia
+            if (message.photoUrl.isNotEmpty()) {
+                Glide.with(binding.profileImage.context)
+                    .load(message.photoUrl)
+                    .circleCrop()
+                    .into(binding.profileImage)
+            }
+
+            binding.replyIcon.setOnClickListener {
+                onReplyClick(message)
+            }
+
+            itemView.setOnClickListener {
+                onItemClick(message)
+            }
         }
     }
 
     class DiffCallback : DiffUtil.ItemCallback<Message>() {
         override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean {
-            return oldItem.userId == newItem.userId
+            return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean {
@@ -63,4 +60,3 @@ class ForumAdapter : ListAdapter<Message, ForumAdapter.MessageViewHolder>(DiffCa
         }
     }
 }
-
