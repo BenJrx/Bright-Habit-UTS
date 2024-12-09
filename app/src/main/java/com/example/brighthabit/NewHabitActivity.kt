@@ -43,10 +43,9 @@ class NewHabitActivity : AppCompatActivity() {
         binding.btnCreate.setOnClickListener {
             val habitName = binding.etHabitName.text.toString()
             val goal = binding.etGoal.text.toString()
-            val times = binding.etTimes.text.toString()
             val targetDate = binding.tvDate.text.toString()
 
-            if (habitName.isEmpty() || goal.isEmpty() || times.isEmpty() ||
+            if (habitName.isEmpty() || goal.isEmpty() ||
                 targetDate == "Select a target or end date") {
                 Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -62,13 +61,12 @@ class NewHabitActivity : AppCompatActivity() {
             val habit = Habit(
                 namaHabit = habitName,
                 goal = goal,
-                times = times.toIntOrNull() ?: 0,
+                times = 0, // Default to 0 or remove if not needed in Habit class
                 date = targetDate,
                 isDone = false,
                 userId = userId,
                 doneDates = mutableListOf() // Initialize with empty list
             )
-
 
             // Save to Firestore
             db.collection("habits")
