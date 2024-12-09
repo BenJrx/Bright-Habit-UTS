@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.brighthabit.databinding.ActivityMessageDetailBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class MessageDetailActivity : AppCompatActivity() {
@@ -72,12 +73,17 @@ class MessageDetailActivity : AppCompatActivity() {
     }
 
     private fun sendReply(messageId: String, replyText: String) {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: "Unknown"
+        if (currentUserId == "Unknown") {
+            Toast.makeText(this, "User not logged in!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val replyData = hashMapOf(
-            "username" to "Current User",
-            "date" to System.currentTimeMillis().toString(),
             "text" to replyText,
             "parentId" to messageId,
-            "userId" to "currentUserId" 
+            "date" to System.currentTimeMillis().toString(),
+            "userId" to currentUserId
         )
 
         db.collection("replies")
@@ -104,6 +110,12 @@ class MessageDetailActivity : AppCompatActivity() {
                 val tasksCount = querySnapshot.size()
                 var completedTasks = 0
 
+                if (tasksCount == 0) {
+                    Log.d("MessageDetailActivity", "No replies found for messageId: $messageId")
+                    repliesAdapter.submitList(repliesList)
+                    return@addOnSuccessListener
+                }
+
                 for (document in querySnapshot.documents) {
                     val reply = Reply(
                         id = document.id,
@@ -120,7 +132,7 @@ class MessageDetailActivity : AppCompatActivity() {
                                 val username = userDoc.getString("username") ?: "Unknown"
                                 val photoUrl = userDoc.getString("photoUrl") ?: ""
 
-                                Log.d("MessageDetailActivity", "User data fetched: $username, $photoUrl")
+                                Log.d("MessageDetailActivity", "User data fetched: $username, $photoUrl for userId: $userId")
 
                                 // Update reply dengan data pengguna
                                 reply.username = username
@@ -130,17 +142,22 @@ class MessageDetailActivity : AppCompatActivity() {
                                 completedTasks++
 
                                 if (completedTasks == tasksCount) {
+                                    Log.d("MessageDetailActivity", "All replies processed successfully")
                                     repliesAdapter.submitList(repliesList)
                                 }
                             }
                             .addOnFailureListener { e ->
-                                Log.e("MessageDetailActivity", "Failed to fetch user data", e)
+                                Log.e("MessageDetailActivity", "Failed to fetch user data for userId: $userId", e)
+                                reply.username = "Anonymous"
+                                reply.photoUrl = ""
+                                repliesList.add(reply)
                                 completedTasks++
                                 if (completedTasks == tasksCount) {
                                     repliesAdapter.submitList(repliesList)
                                 }
                             }
                     } else {
+                        Log.d("MessageDetailActivity", "No userId found for replyId: ${reply.id}")
                         repliesList.add(reply)
                         completedTasks++
 
@@ -153,9 +170,8 @@ class MessageDetailActivity : AppCompatActivity() {
                 binding.repliesRecyclerView.adapter = repliesAdapter
             }
             .addOnFailureListener { e ->
+                Log.e("MessageDetailActivity", "Failed to load replies for messageId: $messageId", e)
                 Toast.makeText(this, "Failed to load replies: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
-
-
 }
