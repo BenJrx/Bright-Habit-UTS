@@ -38,6 +38,11 @@ class ForumActivity : AppCompatActivity() {
         loadMessages { messages ->
             forumAdapter.submitList(messages)
         }
+
+        binding.fabAddMessage.setOnClickListener {
+            val intent = Intent(this, EditMessageActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun loadMessages(onComplete: (List<Message>) -> Unit) {
@@ -61,7 +66,7 @@ class ForumActivity : AppCompatActivity() {
 
                 onComplete(messages)
             }
-            .addOnFailureListener { e ->
+            .addOnFailureListener {
                 onComplete(emptyList())
             }
     }
