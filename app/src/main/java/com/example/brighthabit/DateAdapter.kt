@@ -2,9 +2,7 @@ package com.example.brighthabit
 
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.brighthabit.databinding.ItemDateBinding
 
@@ -21,7 +19,6 @@ class DateAdapter(private val weekDates: List<String>) : RecyclerView.Adapter<Da
         val date = weekDates[position]
         val (day, dateNum) = date.split(" ")
         holder.bind(day, dateNum, position == selectedPosition)
-
 
         holder.itemView.setOnClickListener {
             val previousPosition = selectedPosition
@@ -46,13 +43,12 @@ class DateAdapter(private val weekDates: List<String>) : RecyclerView.Adapter<Da
             binding.tvDay.text = day
             binding.tvDate.text = date
 
-            // Highlight if selected
             if (isSelected) {
-                binding.root.setBackgroundResource(R.drawable.selected_date_background) // Green box
+                binding.root.setBackgroundResource(R.drawable.selected_date_background) // Highlight background
                 binding.tvDay.setTextColor(Color.WHITE)
                 binding.tvDate.setTextColor(Color.WHITE)
             } else {
-                binding.root.setBackgroundResource(android.R.color.transparent)
+                binding.root.setBackgroundResource(android.R.color.transparent) // Reset background
                 binding.tvDay.setTextColor(Color.BLACK)
                 binding.tvDate.setTextColor(Color.BLACK)
             }
