@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ForumActivity">
 
+    <!-- Header Text -->
     <TextView
         android:id="@+id/brightHabitText"
         android:layout_width="wrap_content"
@@ -17,8 +18,11 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp" />
 
+    <!-- Subtitle -->
     <TextView
         android:id="@+id/communitySupportText"
         android:layout_width="wrap_content"
@@ -30,8 +34,11 @@
         app:layout_constraintTop_toBottomOf="@id/brightHabitText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="4dp"/>
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp" />
 
+    <!-- CardView for RecyclerView -->
     <androidx.cardview.widget.CardView
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -42,15 +49,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/fabAddMessage"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="-50dp">
+        android:layout_marginBottom="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:elevation="4dp">
 
+        <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewForum"
             android:layout_width="match_parent"
-            android:layout_height="659dp"
-            android:layout_marginTop="8dp" />
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:padding="16dp" />
     </androidx.cardview.widget.CardView>
 
+    <!-- Floating Action Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddMessage"
         android:layout_width="wrap_content"
@@ -60,6 +72,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:tint="@android:color/white"
-        app:backgroundTint="@color/green" />
+        app:backgroundTint="@color/green"
+        android:elevation="8dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
