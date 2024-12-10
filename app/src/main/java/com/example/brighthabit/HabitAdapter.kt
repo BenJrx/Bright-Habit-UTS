@@ -33,51 +33,42 @@ class HabitAdapter(val habitList: MutableList<Habit>) : RecyclerView.Adapter<Hab
         val habit = habitList[position]
         val currentDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
 
-        // Atur tampilan berdasarkan data Habit
         holder.habitName.text = habit.namaHabit
         holder.habitDate.text = habit.date
 
-        // Logika untuk memeriksa apakah habit selesai hari ini
         val isDoneToday = habit.doneDates.contains(currentDate)
         holder.checkDone.isChecked = isDoneToday
         updateTextDecoration(holder, isDoneToday)
 
-        // Navigasi ke HabitDetailActivity saat item diklik
         holder.itemView.setOnClickListener {
             val context = holder.itemView.context
             val intent = Intent(context, HabitDetailActivity::class.java)
-            intent.putExtra("HABIT_ID", habit.id) // Pastikan key sesuai dengan yang digunakan di HabitDetailActivity
+            intent.putExtra("HABIT_ID", habit.id)
             context.startActivity(intent)
         }
 
-        // Listener CheckBox untuk memperbarui status habit
         holder.checkDone.setOnCheckedChangeListener { _, isChecked ->
-            val currentDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
-
-            if (isChecked) {
-                if (!habit.doneDates.contains(currentDate)) {
-                    habit.doneDates.add(currentDate) // Tambahkan tanggal saat ini
+            if (holder.checkDone.isPressed) { // Pastikan hanya ketika pengguna mengubah
+                if (isChecked) {
+                    if (!habit.doneDates.contains(currentDate)) {
+                        habit.doneDates.add(currentDate)
+                    }
+                } else {
+                    habit.doneDates.remove(currentDate)
                 }
-            } else {
-                habit.doneDates.remove(currentDate) // Hapus jika tidak dicentang
+
+                db.collection("habits").document(habit.id)
+                    .update("doneDates", habit.doneDates)
+                    .addOnSuccessListener {
+                        Log.d("HabitUpdate", "Tanggal habit berhasil diperbarui")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("HabitUpdate", "Gagal memperbarui habit: ${e.message}")
+                    }
             }
-
-            // Update data ke Firestore
-            db.collection("habits").document(habit.id)
-                .update("doneDates", habit.doneDates)
-                .addOnSuccessListener {
-                    Log.d("HabitUpdate", "Tanggal habit berhasil diperbarui")
-                }
-                .addOnFailureListener { e ->
-                    Log.e("HabitUpdate", "Gagal memperbarui habit: ${e.message}")
-                }
         }
-
-        // Jangan reset status done jika sudah selesai pada hari sebelumnya
-        resetHabitStatusIfNeeded(habit, currentDate)
     }
 
-    // Fungsi untuk memperbarui dekorasi teks (efek strikethrough)
     private fun updateTextDecoration(holder: HabitViewHolder, isDone: Boolean) {
         if (isDone) {
             holder.habitName.paintFlags = holder.habitName.paintFlags or android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
@@ -86,15 +77,8 @@ class HabitAdapter(val habitList: MutableList<Habit>) : RecyclerView.Adapter<Hab
         }
     }
 
-    // Fungsi untuk memeriksa apakah habit sudah selesai hari ini
-    private fun resetHabitStatusIfNeeded(habit: Habit, currentDate: String) {
-        val isDoneToday = habit.doneDates.contains(currentDate)
-        habit.isDone = isDoneToday
-    }
-
     override fun getItemCount(): Int = habitList.size
 
-    // Fungsi untuk memperbarui list habit di adapter
     fun updateHabitList(newHabitList: List<Habit>) {
         habitList.clear()
         habitList.addAll(newHabitList)

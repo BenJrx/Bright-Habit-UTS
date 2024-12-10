@@ -9,14 +9,6 @@
     tools:context=".Homepage">
 
     <!-- Logo Image -->
-    <ImageView
-        android:id="@+id/logoImage"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_margin="16dp"
-        android:src="@drawable/logo_bright_habit"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Forum Icon -->
     <ImageView
@@ -34,19 +26,22 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Greeting Text -->
+
+    <!-- Username Text -->
+
     <TextView
         android:id="@+id/greetingText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="17dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="68dp"
         android:text="Halo,"
         android:textColor="@color/black"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/logoImage" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Username Text -->
     <TextView
         android:id="@+id/username"
         android:layout_width="0dp"
@@ -76,18 +71,19 @@
         app:layout_constraintStart_toStartOf="@id/greetingText"
         app:layout_constraintTop_toBottomOf="@id/username" />
 
+    <!-- Habits Card -->
+
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileImage"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="28dp"
         app:civ_border_color="@color/green"
         app:civ_border_width="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/greetingText" />
 
-    <!-- Habits Card -->
     <androidx.cardview.widget.CardView
         android:id="@+id/habitsCard"
         android:layout_width="wrap_content"
@@ -152,35 +148,36 @@
 
 
     <!-- Add New Habit Button -->
+
+    <!-- RecyclerView for Dates -->
+
     <Button
         android:id="@+id/btnAddHabit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:backgroundTint="@color/green"
         android:text="Add New Habit"
         android:textAllCaps="true"
-        android:backgroundTint="@color/green"
         android:textColor="@android:color/white"
-        app:layout_constraintTop_toBottomOf="@id/recyclerViewHabits"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recyclerViewHabits" />
 
-    <!-- RecyclerView for Dates -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewDates"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
         android:clipToPadding="false"
         android:paddingVertical="8dp"
         android:scrollbars="none"
-        android:layout_marginTop="200dp"
-        android:layout_marginBottom="0dp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnAddHabit"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
+        app:layout_constraintVertical_bias="1.0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
