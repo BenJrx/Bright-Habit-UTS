@@ -201,7 +201,7 @@ class Homepage : AppCompatActivity() {
         calendar.add(Calendar.DAY_OF_YEAR, -4) // Mulai dari 4 hari kemarin
 
         weekDates.clear()
-        for (i in 0 until 8) { // 4 hari kemarin + hari ini + 3 hari ke depan
+        for (i in 0 until 7) { // 4 hari kemarin + hari ini + 3 hari ke depan
             val day = SimpleDateFormat("EEE", Locale.getDefault()).format(calendar.time)
             val date = SimpleDateFormat("dd", Locale.getDefault()).format(calendar.time)
             weekDates.add("$day $date")
