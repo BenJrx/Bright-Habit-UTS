@@ -1,25 +1,40 @@
 package com.example.brighthabit
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.brighthabit.databinding.ActivityEditMessageBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import android.location.Geocoder
+import android.location.Address
+import java.io.IOException
 
 class EditMessageActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityEditMessageBinding
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    private val LOCATION_PERMISSION_REQUEST_CODE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEditMessageBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         binding.buttonSubmit.setOnClickListener {
             val messageText = binding.editTextMessage.text.toString()
@@ -28,17 +43,69 @@ class EditMessageActivity : AppCompatActivity() {
             val currentUser = auth.currentUser
             if (currentUser != null && messageText.isNotBlank()) {
                 Log.d("EditMessageActivity", "User logged in: ${currentUser.uid}")
-                // Ambil data pengguna dan kirim pesan
-                val userId = currentUser.uid
-                fetchUserDataAndSendMessage(userId, messageText)
+                // Ambil data lokasi pengguna dan kirim pesan
+                getLocationAndSendMessage(currentUser.uid, messageText)
             } else {
                 Log.e("EditMessageActivity", "No user logged in or message is empty.")
                 // Tampilkan pesan kesalahan jika pengguna tidak login atau pesan kosong
+                Toast.makeText(this, "Message cannot be empty or user not logged in", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun fetchUserDataAndSendMessage(userId: String, messageText: String) {
+    private fun getLocationAndSendMessage(userId: String, messageText: String) {
+        // Meminta izin untuk lokasi
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED) {
+
+            // Mendapatkan lokasi
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location ->
+                    if (location != null) {
+                        // Ambil data lokasi pengguna
+                        val latitude = location.latitude
+                        val longitude = location.longitude
+
+                        // Menggunakan Geocoder untuk mendapatkan alamat kota dan negara
+                        val locationString = getLocationFromCoordinates(latitude, longitude)
+
+                        // Ambil data pengguna dan kirim pesan
+                        fetchUserDataAndSendMessage(userId, messageText, latitude, longitude, locationString)
+                    } else {
+                        // Jika lokasi tidak tersedia, kirim pesan tanpa lokasi
+                        fetchUserDataAndSendMessage(userId, messageText, null, null, null)
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e("EditMessageActivity", "Error getting location: ${e.message}")
+                    // Jika gagal mendapatkan lokasi, kirim pesan tanpa lokasi
+                    fetchUserDataAndSendMessage(userId, messageText, null, null, null)
+                }
+        } else {
+            // Meminta izin lokasi jika belum diberikan
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+        }
+    }
+
+    // Fungsi untuk mengambil lokasi berdasarkan koordinat
+    private fun getLocationFromCoordinates(latitude: Double, longitude: Double): String? {
+        val geocoder = Geocoder(this, Locale.getDefault())
+        try {
+            val addresses: List<Address> = geocoder.getFromLocation(latitude, longitude, 1) as List<Address>
+            if (addresses.isNotEmpty()) {
+                val address = addresses[0]
+                val city = address.locality ?: ""
+                val country = address.countryName ?: ""
+                return "$city, $country"
+            }
+        } catch (e: IOException) {
+            Log.e("EditMessageActivity", "Geocoder error: ${e.message}")
+        }
+        return null
+    }
+
+    private fun fetchUserDataAndSendMessage(userId: String, messageText: String, latitude: Double?, longitude: Double?, location: String?) {
         // Ambil data pengguna dari koleksi `users`
         db.collection("users").document(userId).get()
             .addOnSuccessListener { userSnapshot ->
@@ -53,17 +120,22 @@ class EditMessageActivity : AppCompatActivity() {
                         date = currentDate,
                         text = messageText,
                         photoUrl = photoUrl,
-                        userId = userId
+                        userId = userId,
+                        latitude = latitude,
+                        longitude = longitude,
+                        location = location // Menyertakan lokasi (city, country) atau null
                     )
 
-                    
+                    // Mengirim pesan ke Firestore
                     db.collection("messages").add(message)
                         .addOnSuccessListener {
-                            Log.d("EditMessageActivity", "Message sent successfully: $message")
-                            finish() // Kembali ke activity sebelumnya
+                            Log.d("EditMessageActivity", "Message sent successfully")
+                            Toast.makeText(this, "Message sent successfully!", Toast.LENGTH_SHORT).show()
+                            finish() // Kembali ke activity sebelumnya setelah pesan terkirim
                         }
                         .addOnFailureListener { e ->
                             Log.e("EditMessageActivity", "Error sending message: ${e.message}")
+                            Toast.makeText(this, "Failed to send message.", Toast.LENGTH_SHORT).show()
                         }
                 } else {
                     Log.e("EditMessageActivity", "User document not found for userId=$userId")
@@ -71,6 +143,27 @@ class EditMessageActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e ->
                 Log.e("EditMessageActivity", "Error fetching user data: ${e.message}")
+                Toast.makeText(this, "Failed to fetch user data.", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    // Menangani hasil dari permintaan izin lokasi
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            LOCATION_PERMISSION_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Jika izin diberikan, coba lagi untuk mendapatkan lokasi dan mengirim pesan
+                    val currentUser = auth.currentUser
+                    if (currentUser != null) {
+                        getLocationAndSendMessage(currentUser.uid, binding.editTextMessage.text.toString())
+                    }
+                } else {
+                    Log.e("EditMessageActivity", "Location permission denied")
+                    // Tampilkan pesan kepada pengguna atau lakukan fallback jika perlu
+                    Toast.makeText(this, "Location permission is required", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 }

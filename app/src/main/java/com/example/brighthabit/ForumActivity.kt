@@ -1,9 +1,12 @@
 package com.example.brighthabit
 
 import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.brighthabit.databinding.ActivityForumBinding
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -34,6 +37,10 @@ class ForumActivity : AppCompatActivity() {
             }
         )
         binding.recyclerViewForum.adapter = forumAdapter
+
+        // Menambahkan jarak antar item di RecyclerView
+        val decoration = SpaceItemDecoration(40) // Mengatur jarak antar item (16dp)
+        binding.recyclerViewForum.addItemDecoration(decoration)
 
         loadMessages { messages ->
             forumAdapter.submitList(messages)
@@ -69,5 +76,12 @@ class ForumActivity : AppCompatActivity() {
             .addOnFailureListener {
                 onComplete(emptyList())
             }
+    }
+
+    // Kelas untuk ItemDecoration agar memberi jarak antar item
+    class SpaceItemDecoration(private val space: Int) : RecyclerView.ItemDecoration() {
+        override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+            outRect.bottom = space // Memberikan jarak bawah antar item
+        }
     }
 }

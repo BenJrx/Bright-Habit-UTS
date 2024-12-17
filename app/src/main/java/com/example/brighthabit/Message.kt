@@ -6,5 +6,8 @@ data class Message(
     val date: String = "",
     val text: String = "",
     val photoUrl: String = "",
-    val userId: String = ""
+    val userId: String = "",
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val location: String? = null // Fallback jika lokasi sudah diberikan langsung
 )

@@ -1,5 +1,7 @@
 package com.example.brighthabit
 
+import android.location.Geocoder
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -7,6 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.brighthabit.databinding.ItemMessageBinding
+import java.util.*
 
 class ForumAdapter(
     private val onReplyClick: (Message) -> Unit,
@@ -40,13 +43,36 @@ class ForumAdapter(
                     .into(binding.profileImage)
             }
 
-            binding.replyIcon.setOnClickListener {
-                onReplyClick(message)
+            // Menampilkan lokasi jika tersedia
+            if (!message.location.isNullOrEmpty()) {
+                // Jika lokasi ada, tampilkan lokasi dari database
+                binding.textViewLocation.text = message.location
+            } else {
+                // Jika tidak ada lokasi, cek koordinat lat/lng
+                if (message.latitude != null && message.longitude != null) {
+                    val geocoder = Geocoder(binding.root.context, Locale.getDefault())
+                    try {
+                        val addresses = geocoder.getFromLocation(message.latitude, message.longitude, 1)
+                        if (addresses.isNullOrEmpty()) {
+                            binding.textViewLocation.text = "Unable to fetch location"
+                        } else {
+                            val city = addresses[0].locality ?: "Unknown City"
+                            val country = addresses[0].countryName ?: "Unknown Country"
+                            binding.textViewLocation.text = "$city, $country"
+                        }
+                    } catch (e: Exception) {
+                        Log.e("ForumAdapter", "Error retrieving location", e)
+                        binding.textViewLocation.text = "Error retrieving location"
+                    }
+                } else {
+                    binding.textViewLocation.text = "No location available"
+                }
+
             }
 
-            itemView.setOnClickListener {
-                onItemClick(message)
-            }
+            // Set up click listeners
+            binding.replyIcon.setOnClickListener { onReplyClick(message) }
+            itemView.setOnClickListener { onItemClick(message) }
         }
     }
 
