@@ -36,36 +36,42 @@ class HabitAdapter(val habitList: MutableList<Habit>) : RecyclerView.Adapter<Hab
         holder.habitName.text = habit.namaHabit
         holder.habitDate.text = habit.date
 
-        val isDoneToday = habit.doneDates.contains(currentDate)
-        holder.checkDone.isChecked = isDoneToday
-        updateTextDecoration(holder, isDoneToday)
+        db.collection("habits").document(habit.id).get().addOnSuccessListener { document ->
+            val storedDoneDates = (document.get("doneDates") as? List<String>)?.toMutableList() ?: mutableListOf()
+            val isDoneToday = storedDoneDates.contains(currentDate)
+
+            holder.checkDone.isChecked = isDoneToday
+            updateTextDecoration(holder, isDoneToday)
+
+            holder.checkDone.setOnClickListener {
+                if (!isDoneToday) { // Only allow marking as done
+                    storedDoneDates.add(currentDate)
+
+                    db.collection("habits").document(habit.id)
+                        .update("doneDates", storedDoneDates)
+                        .addOnSuccessListener {
+                            holder.checkDone.isChecked = true
+                            updateTextDecoration(holder, true)
+                            Log.d("HabitUpdate", "doneDates updated successfully.")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("HabitUpdate", "Failed to update doneDates: ${e.message}")
+                        }
+                } else {
+                    // Prevent unchecking if already marked as done
+                    holder.checkDone.isChecked = true
+                    Log.d("HabitUpdate", "Unchecking not allowed.")
+                }
+            }
+        }.addOnFailureListener { e ->
+            Log.e("HabitFetch", "Failed to fetch habit: ${e.message}")
+        }
 
         holder.itemView.setOnClickListener {
             val context = holder.itemView.context
             val intent = Intent(context, HabitDetailActivity::class.java)
             intent.putExtra("HABIT_ID", habit.id)
             context.startActivity(intent)
-        }
-
-        holder.checkDone.setOnCheckedChangeListener { _, isChecked ->
-            if (holder.checkDone.isPressed) { // Pastikan hanya ketika pengguna mengubah
-                if (isChecked) {
-                    if (!habit.doneDates.contains(currentDate)) {
-                        habit.doneDates.add(currentDate)
-                    }
-                } else {
-                    habit.doneDates.remove(currentDate)
-                }
-
-                db.collection("habits").document(habit.id)
-                    .update("doneDates", habit.doneDates)
-                    .addOnSuccessListener {
-                        Log.d("HabitUpdate", "Tanggal habit berhasil diperbarui")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.e("HabitUpdate", "Gagal memperbarui habit: ${e.message}")
-                    }
-            }
         }
     }
 

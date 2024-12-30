@@ -112,11 +112,11 @@ class Homepage : AppCompatActivity() {
         val currentDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
 
         if (lastDateChecked != currentDate) {
-            // Reset all habits for today
-            resetHabitStatusForToday(currentDate)
+            // Simply update the last checked date
             sharedPreferences.edit().putString("lastDateChecked", currentDate).apply()
         }
     }
+
 
     private fun resetHabitStatusForToday(currentDate: String) {
         val userId = auth.currentUser?.uid ?: return
