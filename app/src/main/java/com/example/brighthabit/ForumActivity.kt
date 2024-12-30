@@ -64,6 +64,7 @@ class ForumActivity : AppCompatActivity() {
                         id = doc.id,
                         username = doc.getString("username") ?: "Unknown",
                         date = doc.getString("date") ?: "",
+                        location = doc.getString("location") ?: "",
                         text = doc.getString("text") ?: "",
                         photoUrl = doc.getString("photoUrl") ?: "",
                         userId = doc.getString("userId") ?: ""
