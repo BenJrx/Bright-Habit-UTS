@@ -20,6 +20,7 @@ class HabitDetailActivity : AppCompatActivity() {
     private lateinit var tvMonthYear: TextView
     private lateinit var tvSuccessDays: TextView
     private lateinit var tvFailedDays: TextView
+    private lateinit var tvCurrentStreak: TextView
     private lateinit var rvCalendar: RecyclerView
     private lateinit var btnBack: Button
 
@@ -34,9 +35,11 @@ class HabitDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_habit_detail)
 
+        // Inisialisasi view
         tvMonthYear = findViewById(R.id.tvMonthYear)
         tvSuccessDays = findViewById(R.id.tvSuccessDays)
         tvFailedDays = findViewById(R.id.tvFailedDays)
+        tvCurrentStreak = findViewById(R.id.tvCurrentStreak)
         rvCalendar = findViewById(R.id.calendarView)
         btnBack = findViewById(R.id.btnBack)
 
@@ -46,7 +49,7 @@ class HabitDetailActivity : AppCompatActivity() {
         setupCalendar()
         loadHabitDetails()
 
-        // Menambahkan aksi pada tombol "Kembali"
+        // Aksi tombol "Kembali"
         btnBack.setOnClickListener {
             val intent = Intent(this, Homepage::class.java)
             startActivity(intent)
@@ -79,6 +82,13 @@ class HabitDetailActivity : AppCompatActivity() {
         db.collection("habits").document(habitId).get().addOnSuccessListener { document ->
             val doneDates = document["doneDates"] as? List<String> ?: listOf()
             val isDone = selectedDate in doneDates
+
+            if (!isDone) {
+                val currentNotDone = document.getLong("isNotDone")?.toInt() ?: 0
+                db.collection("habits").document(habitId)
+                    .update("isNotDone", currentNotDone + 1)
+            }
+
             val statusMessage = if (isDone) "Habit selesai pada hari ini." else "Habit belum selesai pada hari ini."
 
             AlertDialog.Builder(this)
@@ -92,12 +102,13 @@ class HabitDetailActivity : AppCompatActivity() {
         db.collection("habits").document(habitId).get().addOnSuccessListener { document ->
             if (document != null && document.exists()) {
                 val doneDates = document.get("doneDates") as? List<String> ?: listOf()
-                updateStreaks(doneDates)
+                val isNotDone = document.getLong("isNotDone")?.toInt() ?: 0
+                updateStreaks(doneDates, isNotDone)
             }
         }
     }
 
-    private fun updateStreaks(doneDates: List<String>) {
+    private fun updateStreaks(doneDates: List<String>, isNotDone: Int) {
         val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.MONTH, currentMonth)
@@ -117,10 +128,11 @@ class HabitDetailActivity : AppCompatActivity() {
         }
 
         val successDays = validDates.size
-        val failedDays = totalDaysInMonth - successDays
+        val failedDays = isNotDone
 
         tvSuccessDays.text = "$successDays Hari"
         tvFailedDays.text = "$failedDays Hari"
+        tvCurrentStreak.text = "$successDays Hari"
     }
 
     // Inner class untuk menambahkan jarak antar item RecyclerView
