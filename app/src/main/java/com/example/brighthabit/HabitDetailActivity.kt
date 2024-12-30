@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import org.w3c.dom.Text
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -23,6 +24,7 @@ class HabitDetailActivity : AppCompatActivity() {
     private lateinit var tvCurrentStreak: TextView
     private lateinit var rvCalendar: RecyclerView
     private lateinit var btnBack: Button
+    private lateinit var tvNote: TextView
 
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
@@ -41,6 +43,7 @@ class HabitDetailActivity : AppCompatActivity() {
         tvFailedDays = findViewById(R.id.tvFailedDays)
         tvCurrentStreak = findViewById(R.id.tvCurrentStreak)
         rvCalendar = findViewById(R.id.calendarView)
+        tvNote = findViewById(R.id.tvNote)
         btnBack = findViewById(R.id.btnBack)
 
         // Ambil habit ID dari intent
@@ -98,15 +101,27 @@ class HabitDetailActivity : AppCompatActivity() {
         }
     }
 
+
     private fun loadHabitDetails() {
         db.collection("habits").document(habitId).get().addOnSuccessListener { document ->
             if (document != null && document.exists()) {
                 val doneDates = document.get("doneDates") as? List<String> ?: listOf()
                 val isNotDone = document.getLong("isNotDone")?.toInt() ?: 0
+                val goal = document.getString("goal") ?: "No goal set."
+
+                // Update the streaks
                 updateStreaks(doneDates, isNotDone)
+
+                // Update tvNote with the goal
+                tvNote.text = goal
+            } else {
+                tvNote.text = "Goal data not found."
             }
+        }.addOnFailureListener { exception ->
+            tvNote.text = "Failed to load goal: ${exception.message}"
         }
     }
+
 
     private fun updateStreaks(doneDates: List<String>, isNotDone: Int) {
         val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
