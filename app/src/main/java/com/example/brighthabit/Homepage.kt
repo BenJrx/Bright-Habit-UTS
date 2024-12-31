@@ -106,14 +106,99 @@ class Homepage : AppCompatActivity() {
         }
     }
 
+    // In Homepage.kt
     private fun resetHabitsIfNewDay() {
         val sharedPreferences = getSharedPreferences("AppPreferences", MODE_PRIVATE)
         val lastDateChecked = sharedPreferences.getString("lastDateChecked", "")
         val currentDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
 
         if (lastDateChecked != currentDate) {
-            // Simply update the last checked date
-            sharedPreferences.edit().putString("lastDateChecked", currentDate).apply()
+            val userId = auth.currentUser?.uid ?: return
+            val previousDate = getPreviousDate(lastDateChecked)
+
+            db.collection("habits")
+                .whereEqualTo("userId", userId)
+                .get()
+                .addOnSuccessListener { snapshot ->
+                    val batch = db.batch()
+
+                    snapshot.documents.forEach { document ->
+                        val doneDates = document.get("doneDates") as? List<String> ?: listOf()
+
+                        // Check if there was an active streak
+                        val hadStreak = checkForActiveStreak(doneDates, previousDate)
+
+                        // Only increment isNotDone if there was a streak and it was broken
+                        if (hadStreak && !doneDates.contains(previousDate)) {
+                            val currentNotDone = document.getLong("isNotDone")?.toInt() ?: 0
+                            batch.update(
+                                db.collection("habits").document(document.id),
+                                "isNotDone", currentNotDone + 1
+                            )
+                        }
+                    }
+
+                    batch.commit().addOnSuccessListener {
+                        Log.d("Homepage", "Updated isNotDone counts for broken streaks")
+                        sharedPreferences.edit().putString("lastDateChecked", currentDate).apply()
+                    }.addOnFailureListener { e ->
+                        Log.e("Homepage", "Error updating isNotDone counts: ${e.message}")
+                    }
+                }
+        }
+    }
+
+    // Helper function to check if there was an active streak
+    private fun checkForActiveStreak(doneDates: List<String>, previousDate: String): Boolean {
+        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val calendar = Calendar.getInstance()
+
+        try {
+            // Parse the previous date
+            calendar.time = formatter.parse(previousDate) ?: return false
+
+            // Check the last 2 days before previousDate to determine if there was a streak
+            // (minimum 2 consecutive days to consider it a streak)
+            var consecutiveDays = 0
+
+            for (i in 1..2) {
+                calendar.add(Calendar.DAY_OF_YEAR, -1)
+                val checkDate = formatter.format(calendar.time)
+
+                if (doneDates.contains(checkDate)) {
+                    consecutiveDays++
+                } else {
+                    break
+                }
+            }
+
+            // Return true if there was at least a 2-day streak
+            return consecutiveDays >= 2
+
+        } catch (e: Exception) {
+            Log.e("Homepage", "Error checking streak: ${e.message}")
+            return false
+        }
+    }
+
+    // Helper function to get previous date (unchanged)
+    private fun getPreviousDate(dateStr: String?): String {
+        return try {
+            val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val calendar = Calendar.getInstance()
+
+            if (dateStr.isNullOrEmpty()) {
+                calendar.add(Calendar.DAY_OF_YEAR, -1)
+            } else {
+                calendar.time = formatter.parse(dateStr) ?: Date()
+                calendar.add(Calendar.DAY_OF_YEAR, -1)
+            }
+
+            formatter.format(calendar.time)
+        } catch (e: Exception) {
+            val calendar = Calendar.getInstance()
+            calendar.add(Calendar.DAY_OF_YEAR, -1)
+            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(calendar.time)
         }
     }
 

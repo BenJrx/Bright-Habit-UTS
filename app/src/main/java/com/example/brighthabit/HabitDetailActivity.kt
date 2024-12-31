@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import org.w3c.dom.Text
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -86,12 +85,6 @@ class HabitDetailActivity : AppCompatActivity() {
             val doneDates = document["doneDates"] as? List<String> ?: listOf()
             val isDone = selectedDate in doneDates
 
-            if (!isDone) {
-                val currentNotDone = document.getLong("isNotDone")?.toInt() ?: 0
-                db.collection("habits").document(habitId)
-                    .update("isNotDone", currentNotDone + 1)
-            }
-
             val statusMessage = if (isDone) "Habit selesai pada hari ini." else "Habit belum selesai pada hari ini."
 
             AlertDialog.Builder(this)
@@ -100,7 +93,6 @@ class HabitDetailActivity : AppCompatActivity() {
                 .show()
         }
     }
-
 
     private fun loadHabitDetails() {
         db.collection("habits").document(habitId).get().addOnSuccessListener { document ->
@@ -122,7 +114,6 @@ class HabitDetailActivity : AppCompatActivity() {
         }
     }
 
-
     private fun updateStreaks(doneDates: List<String>, isNotDone: Int) {
         val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val calendar = Calendar.getInstance()
@@ -133,6 +124,7 @@ class HabitDetailActivity : AppCompatActivity() {
         val firstDayOfMonth = calendar.apply { set(Calendar.DAY_OF_MONTH, 1) }.time
         val lastDayOfMonth = calendar.apply { set(Calendar.DAY_OF_MONTH, totalDaysInMonth) }.time
 
+        // Filter dates for current month
         val validDates = doneDates.filter {
             try {
                 val date = formatter.parse(it)
@@ -145,9 +137,60 @@ class HabitDetailActivity : AppCompatActivity() {
         val successDays = validDates.size
         val failedDays = isNotDone
 
+        // Calculate current streak
+        var currentStreak = 0
+        if (validDates.isNotEmpty()) {
+            // Sort dates in ascending order
+            val sortedDates = validDates.map { formatter.parse(it) }.sortedBy { it }
+
+            // Get today's date without time
+            val today = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.time
+
+            // Start from the most recent date
+            for (i in sortedDates.indices.reversed()) {
+                val currentDate = sortedDates[i]
+
+                if (i == sortedDates.lastIndex) {
+                    // First iteration, check if this is today or yesterday
+                    val daysDiff = ((today.time - currentDate.time) / (24 * 60 * 60 * 1000)).toInt()
+                    if (daysDiff <= 1) { // Today or yesterday
+                        currentStreak = 1
+                    } else {
+                        break // Streak is broken
+                    }
+                } else {
+                    // Check if the previous date is consecutive
+                    val daysDiff = ((sortedDates[i + 1].time - currentDate.time) / (24 * 60 * 60 * 1000)).toInt()
+                    if (daysDiff == 1) {
+                        currentStreak++
+                    } else {
+                        break // Streak is broken
+                    }
+                }
+            }
+
+            // If there was any break in streak (isNotDone > 0), reset current streak
+            if (failedDays > 0) {
+                // Check if we started a new streak after the last break
+                val lastCompletedDate = sortedDates.last()
+                val daysSinceLastCompletion = ((today.time - lastCompletedDate.time) / (24 * 60 * 60 * 1000)).toInt()
+
+                if (daysSinceLastCompletion <= 1) {
+                    currentStreak = 1 // New streak started
+                } else {
+                    currentStreak = 0 // No active streak
+                }
+            }
+        }
+
         tvSuccessDays.text = "$successDays Hari"
         tvFailedDays.text = "$failedDays Hari"
-        tvCurrentStreak.text = "$successDays Hari"
+        tvCurrentStreak.text = "$currentStreak Hari"
     }
 
     // Inner class untuk menambahkan jarak antar item RecyclerView
