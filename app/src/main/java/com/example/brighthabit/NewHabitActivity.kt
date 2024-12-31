@@ -45,8 +45,7 @@ class NewHabitActivity : AppCompatActivity() {
             val goal = binding.etGoal.text.toString()
             val targetDate = binding.tvDate.text.toString()
 
-            if (habitName.isEmpty() || goal.isEmpty() ||
-                targetDate == "Select a target or end date") {
+            if (habitName.isEmpty() || goal.isEmpty() || targetDate == "Select a target or end date") {
                 Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -57,23 +56,21 @@ class NewHabitActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Habit initialization when creating new habit
             val habit = Habit(
                 namaHabit = habitName,
                 goal = goal,
-                times = 0, // Default to 0 or remove if not needed in Habit class
+                times = 0,
                 date = targetDate,
                 isDone = false,
                 userId = userId,
-                doneDates = mutableListOf() // Initialize with empty list
+                doneDates = mutableListOf()
             )
 
-            // Save to Firestore
             db.collection("habits")
                 .add(habit)
                 .addOnSuccessListener {
                     Toast.makeText(this, "Habit created successfully!", Toast.LENGTH_SHORT).show()
-                    finish() // Return to Homepage
+                    finish()
                 }
                 .addOnFailureListener { e ->
                     Toast.makeText(this, "Error creating habit: ${e.message}", Toast.LENGTH_SHORT).show()

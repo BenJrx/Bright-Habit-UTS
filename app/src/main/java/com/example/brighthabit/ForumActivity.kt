@@ -38,8 +38,7 @@ class ForumActivity : AppCompatActivity() {
         )
         binding.recyclerViewForum.adapter = forumAdapter
 
-        // Menambahkan jarak antar item di RecyclerView
-        val decoration = SpaceItemDecoration(40) // Mengatur jarak antar item (16dp)
+        val decoration = SpaceItemDecoration(40)
         binding.recyclerViewForum.addItemDecoration(decoration)
 
         loadMessages { messages ->
@@ -79,10 +78,9 @@ class ForumActivity : AppCompatActivity() {
             }
     }
 
-    // Kelas untuk ItemDecoration agar memberi jarak antar item
     class SpaceItemDecoration(private val space: Int) : RecyclerView.ItemDecoration() {
         override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-            outRect.bottom = space // Memberikan jarak bawah antar item
+            outRect.bottom = space
         }
     }
 }

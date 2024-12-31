@@ -9,5 +9,5 @@ data class Message(
     val userId: String = "",
     val latitude: Double? = null,
     val longitude: Double? = null,
-    val location: String? = null // Fallback jika lokasi sudah diberikan langsung
+    val location: String? = null
 )

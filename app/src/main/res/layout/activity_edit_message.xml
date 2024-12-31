@@ -8,40 +8,33 @@
     android:background="@color/background"
     tools:context=".EditMessageActivity">
 
-
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary"
+        android:background="@color/green"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/primary"
+            android:background="@color/green"
             app:title="Tulis Pesan"
             app:titleTextColor="@color/on_primary"
             app:navigationIcon="@drawable/ic_close"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
-
     </com.google.android.material.appbar.AppBarLayout>
-
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp">
-
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/messageInputLayout"
@@ -51,10 +44,9 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:boxStrokeColor="@color/primary"
-                app:hintTextColor="@color/primary"
+                app:boxStrokeColor="@color/green"
+                app:hintTextColor="@color/green"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextMessage"
@@ -66,10 +58,7 @@
                     android:gravity="top|start"
                     android:textColor="@color/on_surface"
                     android:padding="12dp" />
-
-
             </com.google.android.material.textfield.TextInputLayout>
-
 
             <TextView
                 android:id="@+id/characterCount"
@@ -77,10 +66,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="0/500"
-                android:textColor="@color/primary"
+                android:textColor="@color/green"
                 app:layout_constraintTop_toBottomOf="@id/messageInputLayout"
                 app:layout_constraintEnd_toEndOf="parent" />
-
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonSubmit"
@@ -91,30 +79,21 @@
                 android:textColor="@color/on_primary"
                 android:padding="12dp"
                 app:cornerRadius="8dp"
-                android:backgroundTint="@color/primary"
+                android:backgroundTint="@color/green"
                 app:layout_constraintTop_toBottomOf="@id/characterCount"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
-
 
             <ProgressBar
                 android:id="@+id/progressBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                android:indeterminateTint="@color/primary"
+                android:indeterminateTint="@color/green"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
     </androidx.core.widget.NestedScrollView>
-
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-

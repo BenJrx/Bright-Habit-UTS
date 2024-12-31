@@ -45,7 +45,6 @@ class Homepage : AppCompatActivity() {
         usernameText = binding.username
         taglineText = binding.tagline
 
-        // Reset habits if the day has changed
         resetHabitsIfNewDay()
 
         val userId = auth.currentUser?.uid
@@ -106,7 +105,6 @@ class Homepage : AppCompatActivity() {
         }
     }
 
-    // In Homepage.kt
     private fun resetHabitsIfNewDay() {
         val sharedPreferences = getSharedPreferences("AppPreferences", MODE_PRIVATE)
         val lastDateChecked = sharedPreferences.getString("lastDateChecked", "")
@@ -125,10 +123,8 @@ class Homepage : AppCompatActivity() {
                     snapshot.documents.forEach { document ->
                         val doneDates = document.get("doneDates") as? List<String> ?: listOf()
 
-                        // Check if there was an active streak
                         val hadStreak = checkForActiveStreak(doneDates, previousDate)
 
-                        // Only increment isNotDone if there was a streak and it was broken
                         if (hadStreak && !doneDates.contains(previousDate)) {
                             val currentNotDone = document.getLong("isNotDone")?.toInt() ?: 0
                             batch.update(
@@ -148,17 +144,13 @@ class Homepage : AppCompatActivity() {
         }
     }
 
-    // Helper function to check if there was an active streak
     private fun checkForActiveStreak(doneDates: List<String>, previousDate: String): Boolean {
         val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val calendar = Calendar.getInstance()
 
         try {
-            // Parse the previous date
             calendar.time = formatter.parse(previousDate) ?: return false
 
-            // Check the last 2 days before previousDate to determine if there was a streak
-            // (minimum 2 consecutive days to consider it a streak)
             var consecutiveDays = 0
 
             for (i in 1..2) {
@@ -172,7 +164,6 @@ class Homepage : AppCompatActivity() {
                 }
             }
 
-            // Return true if there was at least a 2-day streak
             return consecutiveDays >= 2
 
         } catch (e: Exception) {
@@ -181,7 +172,6 @@ class Homepage : AppCompatActivity() {
         }
     }
 
-    // Helper function to get previous date (unchanged)
     private fun getPreviousDate(dateStr: String?): String {
         return try {
             val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -201,7 +191,6 @@ class Homepage : AppCompatActivity() {
             SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(calendar.time)
         }
     }
-
 
     private fun resetHabitStatusForToday(currentDate: String) {
         val userId = auth.currentUser?.uid ?: return
@@ -283,10 +272,10 @@ class Homepage : AppCompatActivity() {
 
     private fun setWeekDates() {
         val calendar = Calendar.getInstance()
-        calendar.add(Calendar.DAY_OF_YEAR, -4) // Mulai dari 4 hari kemarin
+        calendar.add(Calendar.DAY_OF_YEAR, -4)
 
         weekDates.clear()
-        for (i in 0 until 8) { // 4 hari kemarin + hari ini + 3 hari ke depan
+        for (i in 0 until 8) {
             val day = SimpleDateFormat("EEE", Locale.getDefault()).format(calendar.time)
             val date = SimpleDateFormat("dd", Locale.getDefault()).format(calendar.time)
             weekDates.add("$day $date")

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
-        <!-- Shadow Effect -->
         <shape
             android:shape="rectangle">
             <solid android:color="@android:color/white" />
@@ -11,11 +10,10 @@
                 android:top="1dp"
                 android:right="1dp"
                 android:bottom="1dp"/>
-            <solid android:color="#60000000"/> <!-- Semi-transparent shadow color -->
+            <solid android:color="#60000000"/>
         </shape>
     </item>
     <item>
-        <!-- Background Color -->
         <shape
             android:shape="rectangle">
             <solid android:color="@android:color/white" />

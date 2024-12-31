@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp" />
 
     <TextView
         android:id="@+id/communitySupportText"
@@ -30,9 +30,8 @@
         app:layout_constraintTop_toBottomOf="@id/brightHabitText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="4dp"/>
+        android:layout_marginTop="4dp" />
 
-    <!-- RecyclerView untuk menampilkan daftar pesan -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewForum"
         android:layout_width="match_parent"
@@ -44,8 +43,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-
-    <!-- Floating Action Button untuk menambah pesan -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddMessage"
         android:layout_width="wrap_content"

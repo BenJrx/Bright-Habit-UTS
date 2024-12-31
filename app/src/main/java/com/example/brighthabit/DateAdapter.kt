@@ -44,11 +44,11 @@ class DateAdapter(private val weekDates: List<String>) : RecyclerView.Adapter<Da
             binding.tvDate.text = date
 
             if (isSelected) {
-                binding.root.setBackgroundResource(R.drawable.selected_date_background) // Highlight background
+                binding.root.setBackgroundResource(R.drawable.selected_date_background)
                 binding.tvDay.setTextColor(Color.WHITE)
                 binding.tvDate.setTextColor(Color.WHITE)
             } else {
-                binding.root.setBackgroundResource(android.R.color.transparent) // Reset background
+                binding.root.setBackgroundResource(android.R.color.transparent)
                 binding.tvDay.setTextColor(Color.BLACK)
                 binding.tvDate.setTextColor(Color.BLACK)
             }

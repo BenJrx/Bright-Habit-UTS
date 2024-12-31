@@ -2,7 +2,6 @@ package com.example.brighthabit
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.brighthabit.databinding.ActivityLoginBinding
@@ -20,14 +19,12 @@ class Login : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        // Mengecek apakah pengguna sudah login
         val currentUser = auth.currentUser
         if (currentUser != null) {
-            // Jika sudah login, langsung arahkan ke Homepage
             val intent = Intent(this, Homepage::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
-            finish() // Menutup activity login
+            finish()
         }
 
         binding.btnRegister.setOnClickListener {
@@ -61,7 +58,7 @@ class Login : AppCompatActivity() {
                     val intent = Intent(this, Homepage::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
-                    finish() // Menutup halaman login setelah berhasil login
+                    finish()
                 } else {
                     showToast("Login gagal: ${task.exception?.message}")
                 }

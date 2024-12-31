@@ -42,7 +42,6 @@ class ProfileActivity : AppCompatActivity() {
         firestore = FirebaseFirestore.getInstance()
 
         loadUserProfile()
-
         disableEditing()
         btnSave.visibility = View.GONE
 

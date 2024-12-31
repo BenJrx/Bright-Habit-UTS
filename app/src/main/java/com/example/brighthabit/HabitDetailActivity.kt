@@ -36,7 +36,6 @@ class HabitDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_habit_detail)
 
-        // Inisialisasi view
         tvMonthYear = findViewById(R.id.tvMonthYear)
         tvSuccessDays = findViewById(R.id.tvSuccessDays)
         tvFailedDays = findViewById(R.id.tvFailedDays)
@@ -45,13 +44,11 @@ class HabitDetailActivity : AppCompatActivity() {
         tvNote = findViewById(R.id.tvNote)
         btnBack = findViewById(R.id.btnBack)
 
-        // Ambil habit ID dari intent
         habitId = intent.getStringExtra("HABIT_ID") ?: return
 
         setupCalendar()
         loadHabitDetails()
 
-        // Aksi tombol "Kembali"
         btnBack.setOnClickListener {
             val intent = Intent(this, Homepage::class.java)
             startActivity(intent)
@@ -62,10 +59,7 @@ class HabitDetailActivity : AppCompatActivity() {
     private fun setupCalendar() {
         updateMonthYear()
         rvCalendar.layoutManager = GridLayoutManager(this, 7)
-
-        // Tambahkan jarak antar item kalender
-        rvCalendar.addItemDecoration(CalendarItemDecoration(16)) // 16dp padding
-
+        rvCalendar.addItemDecoration(CalendarItemDecoration(16))
         rvCalendar.adapter = CalendarAdapter(currentMonth, currentYear) { selectedDate ->
             checkHabitStatus(selectedDate)
         }
@@ -101,10 +95,8 @@ class HabitDetailActivity : AppCompatActivity() {
                 val isNotDone = document.getLong("isNotDone")?.toInt() ?: 0
                 val goal = document.getString("goal") ?: "No goal set."
 
-                // Update the streaks
                 updateStreaks(doneDates, isNotDone)
 
-                // Update tvNote with the goal
                 tvNote.text = goal
             } else {
                 tvNote.text = "Goal data not found."
@@ -124,7 +116,6 @@ class HabitDetailActivity : AppCompatActivity() {
         val firstDayOfMonth = calendar.apply { set(Calendar.DAY_OF_MONTH, 1) }.time
         val lastDayOfMonth = calendar.apply { set(Calendar.DAY_OF_MONTH, totalDaysInMonth) }.time
 
-        // Filter dates for current month
         val validDates = doneDates.filter {
             try {
                 val date = formatter.parse(it)
@@ -137,13 +128,10 @@ class HabitDetailActivity : AppCompatActivity() {
         val successDays = validDates.size
         val failedDays = isNotDone
 
-        // Calculate current streak
         var currentStreak = 0
         if (validDates.isNotEmpty()) {
-            // Sort dates in ascending order
             val sortedDates = validDates.map { formatter.parse(it) }.sortedBy { it }
 
-            // Get today's date without time
             val today = Calendar.getInstance().apply {
                 set(Calendar.HOUR_OF_DAY, 0)
                 set(Calendar.MINUTE, 0)
@@ -151,39 +139,34 @@ class HabitDetailActivity : AppCompatActivity() {
                 set(Calendar.MILLISECOND, 0)
             }.time
 
-            // Start from the most recent date
             for (i in sortedDates.indices.reversed()) {
                 val currentDate = sortedDates[i]
 
                 if (i == sortedDates.lastIndex) {
-                    // First iteration, check if this is today or yesterday
                     val daysDiff = ((today.time - currentDate.time) / (24 * 60 * 60 * 1000)).toInt()
-                    if (daysDiff <= 1) { // Today or yesterday
+                    if (daysDiff <= 1) {
                         currentStreak = 1
                     } else {
-                        break // Streak is broken
+                        break
                     }
                 } else {
-                    // Check if the previous date is consecutive
                     val daysDiff = ((sortedDates[i + 1].time - currentDate.time) / (24 * 60 * 60 * 1000)).toInt()
                     if (daysDiff == 1) {
                         currentStreak++
                     } else {
-                        break // Streak is broken
+                        break
                     }
                 }
             }
 
-            // If there was any break in streak (isNotDone > 0), reset current streak
             if (failedDays > 0) {
-                // Check if we started a new streak after the last break
                 val lastCompletedDate = sortedDates.last()
                 val daysSinceLastCompletion = ((today.time - lastCompletedDate.time) / (24 * 60 * 60 * 1000)).toInt()
 
                 if (daysSinceLastCompletion <= 1) {
-                    currentStreak = 1 // New streak started
+                    currentStreak = 1
                 } else {
-                    currentStreak = 0 // No active streak
+                    currentStreak = 0
                 }
             }
         }
@@ -193,7 +176,6 @@ class HabitDetailActivity : AppCompatActivity() {
         tvCurrentStreak.text = "$currentStreak Hari"
     }
 
-    // Inner class untuk menambahkan jarak antar item RecyclerView
     class CalendarItemDecoration(private val spacing: Int) : RecyclerView.ItemDecoration() {
         override fun getItemOffsets(
             outRect: Rect,

@@ -10,7 +10,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Tanggal Real-time dengan Rounded Rectangle Background -->
         <TextView
             android:id="@+id/tvMonthYear"
             android:layout_width="match_parent"
@@ -23,13 +22,11 @@
             android:background="@drawable/rounded_rectangle"
             android:layout_marginBottom="16dp" />
 
-        <!-- Garis Pemisah -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/gray"/>
+            android:background="@color/gray" />
 
-        <!-- Statistik Habit -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,7 +34,6 @@
             android:weightSum="3"
             android:layout_marginTop="16dp">
 
-            <!-- Current Streak -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="120dp"
@@ -75,7 +71,6 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- Sukses -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="120dp"
@@ -104,7 +99,6 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- Gagal -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="120dp"
@@ -134,7 +128,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- RecyclerView Kalender -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/calendarView"
             android:layout_width="match_parent"
@@ -144,14 +137,12 @@
             android:padding="8dp"
             android:layout_marginTop="8dp" />
 
-        <!-- Garis Pemisah -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/gray"
-            android:layout_marginTop="18dp"/>
+            android:layout_marginTop="18dp" />
 
-        <!-- Catatan -->
         <TextView
             android:id="@+id/tvNote"
             android:layout_width="match_parent"
@@ -163,7 +154,6 @@
             android:textColor="#000000"
             android:textSize="16sp" />
 
-        <!-- Tombol Kembali -->
         <Button
             android:id="@+id/btnBack"
             android:layout_width="150dp"
@@ -173,6 +163,5 @@
             android:backgroundTint="@color/green"
             android:textColor="#FFFFFF"
             android:layout_gravity="center" />
-
     </LinearLayout>
 </ScrollView>

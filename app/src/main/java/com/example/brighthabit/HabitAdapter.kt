@@ -44,7 +44,7 @@ class HabitAdapter(val habitList: MutableList<Habit>) : RecyclerView.Adapter<Hab
             updateTextDecoration(holder, isDoneToday)
 
             holder.checkDone.setOnClickListener {
-                if (!isDoneToday) { // Only allow marking as done
+                if (!isDoneToday) {
                     storedDoneDates.add(currentDate)
 
                     db.collection("habits").document(habit.id)
@@ -58,7 +58,6 @@ class HabitAdapter(val habitList: MutableList<Habit>) : RecyclerView.Adapter<Hab
                             Log.e("HabitUpdate", "Failed to update doneDates: ${e.message}")
                         }
                 } else {
-                    // Prevent unchecking if already marked as done
                     holder.checkDone.isChecked = true
                     Log.d("HabitUpdate", "Unchecking not allowed.")
                 }

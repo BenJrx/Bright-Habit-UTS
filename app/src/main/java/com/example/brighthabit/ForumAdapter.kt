@@ -35,7 +35,6 @@ class ForumAdapter(
             binding.textViewDate.text = message.date
             binding.textViewMessageContent.text = message.text
 
-            // Memuat gambar profil jika URL tersedia
             if (message.photoUrl.isNotEmpty()) {
                 Glide.with(binding.profileImage.context)
                     .load(message.photoUrl)
@@ -43,12 +42,9 @@ class ForumAdapter(
                     .into(binding.profileImage)
             }
 
-            // Menampilkan lokasi jika tersedia
             if (!message.location.isNullOrEmpty()) {
-                // Jika lokasi ada, tampilkan lokasi dari database
                 binding.textViewLocation.text = message.location
             } else {
-                // Jika tidak ada lokasi, cek koordinat lat/lng
                 if (message.latitude != null && message.longitude != null) {
                     val geocoder = Geocoder(binding.root.context, Locale.getDefault())
                     try {
@@ -67,10 +63,8 @@ class ForumAdapter(
                 } else {
                     binding.textViewLocation.text = "No location available"
                 }
-
             }
 
-            // Set up click listeners
             binding.replyIcon.setOnClickListener { onReplyClick(message) }
             itemView.setOnClickListener { onItemClick(message) }
         }

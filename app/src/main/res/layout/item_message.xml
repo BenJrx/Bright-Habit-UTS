@@ -11,7 +11,6 @@
     android:layout_marginEnd="16dp"
     android:background="@drawable/rounded_message">
 
-    <!-- Profile Image -->
     <ImageView
         android:id="@+id/profileImage"
         android:layout_width="40dp"
@@ -22,7 +21,6 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/ic_default_profile" />
 
-    <!-- Username -->
     <TextView
         android:id="@+id/username"
         android:layout_width="wrap_content"
@@ -36,7 +34,6 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="John Doe" />
 
-    <!-- Location -->
     <TextView
         android:id="@+id/textViewLocation"
         android:layout_width="wrap_content"
@@ -49,8 +46,6 @@
         app:layout_constraintTop_toBottomOf="@id/username"
         tools:text="Tangerang, Indonesia" />
 
-
-    <!-- Date -->
     <TextView
         android:id="@+id/textViewDate"
         android:layout_width="wrap_content"
@@ -63,9 +58,6 @@
         app:layout_constraintHorizontal_bias="1"
         tools:text="2h ago" />
 
-    <!-- Message Content -->
-
-    <!-- Reply Icon -->
     <TextView
         android:id="@+id/textViewMessageContent"
         android:layout_width="0dp"

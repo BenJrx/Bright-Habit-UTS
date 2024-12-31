@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".ProfileActivity">
 
-    <!-- Profil Header -->
     <RelativeLayout
         android:id="@+id/profile_header"
         android:layout_width="420dp"
@@ -18,7 +17,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Avatar -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">

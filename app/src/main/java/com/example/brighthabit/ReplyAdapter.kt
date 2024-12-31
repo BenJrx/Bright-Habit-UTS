@@ -27,17 +27,10 @@ class ReplyAdapter : ListAdapter<Reply, ReplyAdapter.ReplyViewHolder>(ReplyDiffC
 
         fun bind(reply: Reply) {
             Log.d("ReplyAdapter", "Binding reply: username=${reply.username}, photoUrl=${reply.photoUrl}")
-
-            // Menampilkan username
             binding.username.text = reply.username
-
-            // Menampilkan tanggal dengan format
             binding.textViewDate.text = formatTimestamp(reply.date)
-
-            // Menampilkan pesan
             binding.textViewMessage.text = reply.text
 
-            // Menampilkan foto profil dengan Glide
             if (reply.photoUrl.isNotEmpty()) {
                 Glide.with(binding.profileImage.context)
                     .load(reply.photoUrl)
@@ -53,7 +46,7 @@ class ReplyAdapter : ListAdapter<Reply, ReplyAdapter.ReplyViewHolder>(ReplyDiffC
                 sdf.format(date)
             } catch (e: Exception) {
                 Log.e("ReplyAdapter", "Error parsing timestamp: $timestamp", e)
-                timestamp // Kembalikan string asli jika parsing gagal
+                timestamp
             }
         }
     }
